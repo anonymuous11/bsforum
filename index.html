@@ -1026,8 +1026,43 @@
       min-width: 126px;
       font-size: 11px;
     }
+    .daily-prompt { padding: 15px 16px; display: flex; align-items: center; gap: 13px; border: 1px solid color-mix(in srgb, var(--primary) 20%, var(--line)); border-radius: 18px; background: linear-gradient(135deg, var(--primary-soft), var(--surface-solid) 72%); }
+    .daily-prompt-icon { width: 40px; height: 40px; flex: 0 0 auto; border-radius: 13px; display: grid; place-items: center; color: white; background: linear-gradient(135deg, var(--primary), #8b7cff); }
+    .daily-prompt-copy { min-width: 0; flex: 1; }
+    .daily-prompt-label { color: var(--primary); font-size: 8px; font-weight: 900; letter-spacing: .1em; text-transform: uppercase; }
+    .daily-prompt-question { margin-top: 3px; font-size: 12px; font-weight: 850; line-height: 1.4; }
+    .daily-prompt-button { min-height: 34px; padding: 0 11px; border: 1px solid var(--line); border-radius: 11px; color: var(--primary); background: var(--surface-solid); font-size: 9px; font-weight: 850; cursor: pointer; }
+    .post-options { margin: 11px 0 0; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; }
+    .post-category-select { height: 39px; padding: 0 11px; border: 1px solid var(--line); border-radius: 11px; color: var(--text); background: var(--surface-2); outline: none; font-size: 10px; font-weight: 750; }
+    .poll-toggle { min-height: 39px; padding: 0 11px; border: 1px solid var(--line); border-radius: 11px; display: inline-flex; align-items: center; justify-content: center; gap: 7px; color: var(--primary); background: var(--primary-soft); font-size: 10px; font-weight: 850; cursor: pointer; }
+    .poll-builder { grid-column: 1 / -1; display: none; padding: 11px; border: 1px solid var(--line); border-radius: 13px; background: var(--surface-2); }
+    .poll-builder.show { display: grid; gap: 8px; }
+    .poll-builder input { width: 100%; height: 38px; padding: 0 11px; border: 1px solid var(--line); border-radius: 10px; color: var(--text); background: var(--surface-solid); outline: none; font-size: 10px; }
+    .poll-builder-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 10px; font-weight: 850; }
+    .poll-remove { border: 0; color: var(--muted); background: transparent; font-size: 9px; font-weight: 800; cursor: pointer; }
+    .category-filters { display: flex; gap: 6px; overflow-x: auto; padding: 1px 0 5px; scrollbar-width: none; }
+    .category-filters::-webkit-scrollbar { display: none; }
+    .category-filter { flex: 0 0 auto; min-height: 31px; padding: 0 10px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); background: var(--surface-solid); font-size: 9px; font-weight: 800; cursor: pointer; }
+    .category-filter.active { border-color: transparent; color: white; background: var(--primary); }
+    .post-category { display: inline-flex; margin: 0 16px 8px; padding: 4px 8px; border-radius: 999px; color: var(--primary); background: var(--primary-soft); font-size: 8px; font-weight: 850; }
+    .reaction-bar { padding: 8px 12px; display: flex; gap: 6px; overflow-x: auto; border-top: 1px solid var(--line); scrollbar-width: none; }
+    .reaction-btn { flex: 0 0 auto; min-height: 31px; padding: 0 9px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); background: var(--surface-solid); font-size: 9px; font-weight: 800; cursor: pointer; }
+    .reaction-btn.active { border-color: color-mix(in srgb, var(--primary) 35%, var(--line)); color: var(--primary); background: var(--primary-soft); }
+    .poll-card { margin: 4px 16px 14px; padding: 13px; border: 1px solid var(--line); border-radius: 15px; background: var(--surface-2); }
+    .poll-question { margin-bottom: 10px; font-size: 12px; font-weight: 850; }
+    .poll-options { display: grid; gap: 7px; }
+    .poll-option { position: relative; overflow: hidden; min-height: 39px; padding: 0 11px; border: 1px solid var(--line); border-radius: 11px; display: flex; align-items: center; justify-content: space-between; gap: 10px; color: var(--text); background: var(--surface-solid); cursor: pointer; }
+    .poll-option-progress { position: absolute; inset: 0 auto 0 0; width: 0; background: var(--primary-soft); pointer-events: none; transition: width .25s ease; }
+    .poll-option span, .poll-option strong { position: relative; z-index: 1; font-size: 9px; }
+    .poll-option.selected { border-color: color-mix(in srgb, var(--primary) 45%, var(--line)); }
+    .poll-meta { margin-top: 8px; color: var(--subtle); font-size: 8px; }
 
     @media (max-width: 520px) {
+      .daily-prompt { align-items: flex-start; padding: 13px; }
+      .daily-prompt-icon { width: 35px; height: 35px; }
+      .daily-prompt-button { align-self: center; }
+      .post-options { grid-template-columns: 1fr; }
+      .poll-builder { grid-column: 1; }
       .composer-post-entry { padding: 10px 10px 7px; }
       .composer-facebook-top { gap: 9px; }
       .composer-compact-avatar { width: 37px; height: 37px; }
@@ -1677,6 +1712,7 @@
     <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
     <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/></symbol>
     <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></symbol>
     <symbol id="i-volume" viewBox="0 0 24 24"><path d="M11 5 6 9H3v6h3l5 4Z"/><path d="M15 9.5a4 4 0 0 1 0 5M18 7a7 7 0 0 1 0 10"/></symbol>
     <symbol id="i-volume-off" viewBox="0 0 24 24"><path d="M11 5 6 9H3v6h3l5 4Z"/><path d="m16 9 5 5M21 9l-5 5"/></symbol>
     <symbol id="i-log-out" viewBox="0 0 24 24"><path d="M10 17l5-5-5-5M15 12H3"/><path d="M14 3h5a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-5"/></symbol>
@@ -1747,6 +1783,15 @@
       </section>
 
 
+      <section class="daily-prompt" aria-labelledby="dailyPromptLabel">
+        <div class="daily-prompt-icon"><svg class="icon"><use href="#i-spark"></use></svg></div>
+        <div class="daily-prompt-copy">
+          <div class="daily-prompt-label" id="dailyPromptLabel">Chủ đề hôm nay</div>
+          <div class="daily-prompt-question" id="dailyPromptQuestion"></div>
+        </div>
+        <button class="daily-prompt-button" id="dailyPromptAnswer" type="button">Trả lời</button>
+      </section>
+
       <section class="card composer composer-post-panel" id="composerCard" aria-labelledby="composerTitle">
         <div class="composer-closed composer-post-entry" id="composerOpen" role="button" tabindex="0" aria-expanded="false">
           <div class="composer-facebook-top">
@@ -1763,6 +1808,24 @@
         <form class="composer-form" id="postForm">
           <label class="composer-textarea-label" for="postContent">Tạo bài viết</label>
           <textarea id="postContent" maxlength="1500" placeholder="Hỏi bài, chia sẻ kinh nghiệm hoặc viết điều bạn đang suy nghĩ..." aria-label="Nội dung bài viết"></textarea>
+          <div class="post-options">
+            <select class="post-category-select" id="postCategory" aria-label="Danh mục bài viết">
+              <option value="tam-su">💭 Tâm sự</option>
+              <option value="hoi-dap">❓ Hỏi đáp</option>
+              <option value="truong-lop">📚 Chuyện trường lớp</option>
+              <option value="gop-y">💡 Góp ý</option>
+              <option value="giai-tri">🎉 Giải trí</option>
+            </select>
+            <button class="poll-toggle" id="pollToggle" type="button"><svg class="icon icon-sm"><use href="#i-chart"></use></svg>Tạo vote</button>
+            <div class="poll-builder" id="pollBuilder">
+              <div class="poll-builder-head"><span>Tạo bình chọn</span><button class="poll-remove" id="pollRemove" type="button">Xóa vote</button></div>
+              <input id="pollQuestion" type="text" maxlength="160" placeholder="Câu hỏi bình chọn">
+              <input class="poll-option-input" type="text" maxlength="80" placeholder="Lựa chọn 1">
+              <input class="poll-option-input" type="text" maxlength="80" placeholder="Lựa chọn 2">
+              <input class="poll-option-input" type="text" maxlength="80" placeholder="Lựa chọn 3 (không bắt buộc)">
+              <input class="poll-option-input" type="text" maxlength="80" placeholder="Lựa chọn 4 (không bắt buộc)">
+            </div>
+          </div>
           <div class="composer-footer">
             <div class="composer-meta">
               <label class="check-row"><input type="checkbox" id="agreeRule"> Tôi đồng ý với nội quy cộng đồng</label>
@@ -1783,6 +1846,14 @@
           <button class="sort-tab active" type="button" role="tab" aria-selected="true" data-sort="latest">Mới nhất</button>
           <button class="sort-tab" type="button" role="tab" aria-selected="false" data-sort="popular">Nổi bật</button>
         </div>
+      </div>
+      <div class="category-filters" id="categoryFilters" aria-label="Lọc theo danh mục">
+        <button class="category-filter active" type="button" data-category="all">Tất cả</button>
+        <button class="category-filter" type="button" data-category="tam-su">💭 Tâm sự</button>
+        <button class="category-filter" type="button" data-category="hoi-dap">❓ Hỏi đáp</button>
+        <button class="category-filter" type="button" data-category="truong-lop">📚 Trường lớp</button>
+        <button class="category-filter" type="button" data-category="gop-y">💡 Góp ý</button>
+        <button class="category-filter" type="button" data-category="giai-tri">🎉 Giải trí</button>
       </div>
 
       <section class="feed" id="postList" aria-live="polite">
@@ -1980,11 +2051,20 @@
       postForm: $('#postForm'),
       postContent: $('#postContent'),
       postCharCount: $('#postCharCount'),
+      postCategory: $('#postCategory'),
+      pollToggle: $('#pollToggle'),
+      pollBuilder: $('#pollBuilder'),
+      pollRemove: $('#pollRemove'),
+      pollQuestion: $('#pollQuestion'),
+      pollOptionInputs: $$('.poll-option-input'),
       agreeRule: $('#agreeRule'),
       postSubmit: $('#postSubmit'),
       postList: $('#postList'),
       searchInput: $('#searchInput'),
       sortTabs: $$('.sort-tab'),
+      categoryFilters: $$('.category-filter'),
+      dailyPromptQuestion: $('#dailyPromptQuestion'),
+      dailyPromptAnswer: $('#dailyPromptAnswer'),
       announcementBox: $('#announcementBox'),
       announcementContent: $('#announcementContent'),
       announcementTime: $('#announcementTime'),
@@ -2100,11 +2180,14 @@
       cards: new Map(),
       openComments: new Set(),
       sort: 'latest',
+      category: 'all',
       search: '',
       postsLoaded: false,
       feedRenderQueued: false,
       reportPostId: null,
       likePending: new Set(),
+      reactionPending: new Set(),
+      votePending: new Set(),
       connectionSeen: false,
       listenerErrorShown: new Set(),
       studyMembers: new Map(),
@@ -2406,6 +2489,39 @@
       return post.authorName || post.name || 'Thành viên ẩn danh';
     }
 
+    const categories = {
+      'tam-su': '💭 Tâm sự',
+      'hoi-dap': '❓ Hỏi đáp',
+      'truong-lop': '📚 Chuyện trường lớp',
+      'gop-y': '💡 Góp ý',
+      'giai-tri': '🎉 Giải trí'
+    };
+    const reactionTypes = {
+      'dong-cam': { emoji: '💜', label: 'Đồng cảm' },
+      'huu-ich': { emoji: '💡', label: 'Hữu ích' },
+      vui: { emoji: '😄', label: 'Vui' },
+      'co-len': { emoji: '🙌', label: 'Cố lên' }
+    };
+    const dailyPrompts = [
+      'Một điều nhỏ nào đã làm bạn vui hôm nay?',
+      'Nếu được nhắn một câu cho bản thân của một năm trước, bạn sẽ nói gì?',
+      'Có điều gì bạn đang muốn hỏi nhưng chưa từng dám hỏi?',
+      'Thói quen nào gần đây giúp cuộc sống của bạn tốt hơn?',
+      'Bạn đang mong chờ điều gì nhất trong tuần này?',
+      'Một bài học bạn chỉ hiểu được sau khi đã trải qua là gì?',
+      'Hôm nay bạn muốn gửi lời cảm ơn đến ai?'
+    ];
+
+    function reactionCount(post, type) {
+      const reaction = post.reactions && post.reactions[type];
+      return Math.max(0, Number(reaction && reaction.count) || 0);
+    }
+
+    function totalEngagement(post) {
+      return (Number(post.likes) || 0) +
+        Object.keys(reactionTypes).reduce((total, type) => total + reactionCount(post, type), 0);
+    }
+
     function scheduleFeedRender() {
       if (state.feedRenderQueued) return;
       state.feedRenderQueued = true;
@@ -2419,9 +2535,10 @@
       const query = state.search.trim().toLocaleLowerCase('vi-VN');
       let posts = Array.from(state.posts.entries()).map(([id, post]) => ({ id, ...(post || {}) }));
       if (query) posts = posts.filter(post => String(post.content || '').toLocaleLowerCase('vi-VN').includes(query));
+      if (state.category !== 'all') posts = posts.filter(post => post.category === state.category);
       posts.sort((a, b) => {
         if (state.sort === 'popular') {
-          const score = ((Number(b.likes) || 0) + countComments(b.comments) * 2) - ((Number(a.likes) || 0) + countComments(a.comments) * 2);
+          const score = (totalEngagement(b) + countComments(b.comments) * 2) - (totalEngagement(a) + countComments(a.comments) * 2);
           if (score) return score;
         }
         return numberTimestamp(b.timestamp) - numberTimestamp(a.timestamp);
@@ -2487,9 +2604,18 @@
           <button class="more-btn" type="button" data-action="report" aria-label="Báo cáo bài viết">${iconUse('i-more')}</button>
         </div>
         <div class="post-content"></div>
+        <div class="post-category" hidden></div>
+        <div class="poll-card" hidden>
+          <div class="poll-question"></div>
+          <div class="poll-options"></div>
+          <div class="poll-meta"></div>
+        </div>
         <div class="post-stats">
-          <span>${iconUse('i-heart')}<b data-like-count>0</b> lượt thích</span>
+          <span>${iconUse('i-heart')}<b data-like-count>0</b> lượt tương tác</span>
           <span>${iconUse('i-message')}<b data-comment-count>0</b> bình luận</span>
+        </div>
+        <div class="reaction-bar">
+          ${Object.entries(reactionTypes).map(([type, reaction]) => `<button class="reaction-btn" type="button" data-action="reaction" data-reaction="${type}">${reaction.emoji} ${reaction.label} <b>0</b></button>`).join('')}
         </div>
         <div class="post-actions">
           <button class="action-btn" type="button" data-action="like">${iconUse('i-heart')}<span>Thích</span></button>
@@ -2511,6 +2637,39 @@
       return card;
     }
 
+    function renderPoll(card, post) {
+      const pollCard = $('.poll-card', card);
+      const poll = post.poll;
+      const options = poll && poll.options && typeof poll.options === 'object' ? Object.entries(poll.options) : [];
+      if (!poll || !poll.question || options.length < 2) {
+        pollCard.hidden = true;
+        return;
+      }
+      pollCard.hidden = false;
+      $('.poll-question', pollCard).textContent = String(poll.question);
+      const votes = poll.votes && typeof poll.votes === 'object' ? poll.votes : {};
+      const voteValues = Object.values(votes);
+      const total = voteValues.length;
+      const selected = votes[identity.id] || '';
+      const optionsNode = $('.poll-options', pollCard);
+      optionsNode.innerHTML = '';
+      options.forEach(([key, value]) => {
+        const count = voteValues.filter(optionKey => optionKey === key).length;
+        const percent = total ? Math.round(count * 100 / total) : 0;
+        const button = document.createElement('button');
+        button.className = `poll-option${selected === key ? ' selected' : ''}`;
+        button.type = 'button';
+        button.dataset.action = 'vote';
+        button.dataset.option = key;
+        button.disabled = state.votePending.has(post.id);
+        button.innerHTML = `<i class="poll-option-progress"></i><span></span><strong>${percent}%</strong>`;
+        $('.poll-option-progress', button).style.width = `${percent}%`;
+        $('span', button).textContent = String(value);
+        optionsNode.appendChild(button);
+      });
+      $('.poll-meta', pollCard).textContent = `${total} lượt bình chọn${selected ? ' · Bạn đã bình chọn' : ' · Chọn một phương án'}`;
+    }
+
     function updatePostCard(card, post, number) {
       const author = getPostAuthor(post);
       const avatar = $('.post-avatar', card);
@@ -2522,8 +2681,21 @@
       const today = $('.today-badge', card);
       today.hidden = !isToday(post.timestamp);
       $('.post-content', card).textContent = String(post.content || '');
-      $('[data-like-count]', card).textContent = String(Math.max(0, Number(post.likes) || 0));
+      const category = $('.post-category', card);
+      category.hidden = !categories[post.category];
+      category.textContent = categories[post.category] || '';
+      $('[data-like-count]', card).textContent = String(totalEngagement(post));
       $('[data-comment-count]', card).textContent = String(countComments(post.comments));
+
+      $$('.reaction-btn', card).forEach(button => {
+        const type = button.dataset.reaction;
+        const reaction = post.reactions && post.reactions[type];
+        $('b', button).textContent = String(reactionCount(post, type));
+        button.classList.toggle('active', Boolean(reaction && reaction.users && reaction.users[identity.id]));
+        button.disabled = state.reactionPending.has(`${post.id}:${type}`);
+      });
+
+      renderPoll(card, post);
 
       const likeButton = $('[data-action="like"]', card);
       likeButton.classList.toggle('liked', Boolean(post.likedBy && post.likedBy[identity.id]));
@@ -2672,23 +2844,40 @@
       event.preventDefault();
       const content = normalizeText(el.postContent.value, limits.post.max);
       if (!content) return toast('Bạn chưa nhập nội dung bài viết.', 'error');
+      let poll = null;
+      if (el.pollBuilder.classList.contains('show')) {
+        const question = normalizeText(el.pollQuestion.value, 160);
+        const optionTexts = el.pollOptionInputs.map(input => normalizeText(input.value, 80)).filter(Boolean);
+        if (!question) return toast('Hãy nhập câu hỏi cho phần vote.', 'error');
+        if (optionTexts.length < 2) return toast('Vote cần ít nhất 2 lựa chọn.', 'error');
+        poll = {
+          question,
+          options: Object.fromEntries(optionTexts.map((text, index) => [`o${index + 1}`, text])),
+          votes: {}
+        };
+      }
       if (!el.agreeRule.checked) return toast('Bạn cần đồng ý với nội quy trước khi đăng.', 'error');
       const cooldown = cooldownReady('post', limits.post.cooldown);
       if (!cooldown.ready) return toast(`Vui lòng chờ ${cooldown.remaining} giây trước khi đăng bài tiếp theo.`, 'error');
 
       setButtonBusy(el.postSubmit, true, 'Đang đăng…');
       try {
-        await refs.posts.push({
+        const payload = {
           content,
+          category: categories[el.postCategory.value] ? el.postCategory.value : 'tam-su',
           timestamp: serverTimestamp,
           likes: 0,
           authorId: identity.id,
           authorName: identity.name
-        });
+        };
+        if (poll) payload.poll = poll;
+        await refs.posts.push(payload);
         cooldown.commit();
         el.postContent.value = '';
         el.postCharCount.textContent = '0';
         el.agreeRule.checked = false;
+        el.postCategory.value = 'tam-su';
+        closePollBuilder();
         el.composerCard.classList.remove('open');
         el.composerOpen.setAttribute('aria-expanded', 'false');
         toast('Bài viết đã được đăng ẩn danh.', 'success');
@@ -2725,6 +2914,58 @@
         state.likePending.delete(postId);
         scheduleFeedRender();
       }
+    }
+
+    async function reactToPost(postId, type) {
+      if (!reactionTypes[type]) return;
+      const pendingKey = `${postId}:${type}`;
+      if (state.reactionPending.has(pendingKey)) return;
+      state.reactionPending.add(pendingKey);
+      scheduleFeedRender();
+      try {
+        await refs.posts.child(postId).child('reactions').child(type).transaction(reaction => {
+          const next = reaction && typeof reaction === 'object' ? reaction : {};
+          next.users = next.users && typeof next.users === 'object' ? next.users : {};
+          if (next.users[identity.id]) delete next.users[identity.id];
+          else next.users[identity.id] = true;
+          next.count = Object.keys(next.users).length;
+          return next;
+        });
+      } catch (error) {
+        console.error(error);
+        toast(describeFirebaseError(error, 'Không thể cập nhật cảm xúc.'), 'error');
+      } finally {
+        state.reactionPending.delete(pendingKey);
+        scheduleFeedRender();
+      }
+    }
+
+    async function votePoll(postId, optionKey) {
+      if (state.votePending.has(postId)) return;
+      state.votePending.add(postId);
+      scheduleFeedRender();
+      try {
+        await refs.posts.child(postId).child('poll').transaction(poll => {
+          if (!poll || !poll.options || !poll.options[optionKey]) return poll;
+          poll.votes = poll.votes && typeof poll.votes === 'object' ? poll.votes : {};
+          if (poll.votes[identity.id] === optionKey) delete poll.votes[identity.id];
+          else poll.votes[identity.id] = optionKey;
+          return poll;
+        });
+      } catch (error) {
+        console.error(error);
+        toast(describeFirebaseError(error, 'Không thể ghi nhận bình chọn.'), 'error');
+      } finally {
+        state.votePending.delete(postId);
+        scheduleFeedRender();
+      }
+    }
+
+    function closePollBuilder() {
+      el.pollBuilder.classList.remove('show');
+      el.pollToggle.setAttribute('aria-expanded', 'false');
+      el.pollQuestion.value = '';
+      el.pollOptionInputs.forEach(input => { input.value = ''; });
     }
 
     function toggleComments(postId, card) {
@@ -3515,6 +3756,8 @@
       if (!postId) return;
       const action = actionButton.dataset.action;
       if (action === 'like') likePost(postId);
+      else if (action === 'reaction') reactToPost(postId, actionButton.dataset.reaction);
+      else if (action === 'vote') votePoll(postId, actionButton.dataset.option);
       else if (action === 'comments') toggleComments(postId, card);
       else if (action === 'report') openReport(postId);
       else if (action === 'reply') {
@@ -3546,6 +3789,12 @@
       button.disabled = false;
     }
 
+    function initDailyPrompt() {
+      const now = new Date();
+      const dayKey = Math.floor(new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime() / 86400000);
+      el.dailyPromptQuestion.textContent = dailyPrompts[Math.abs(dayKey) % dailyPrompts.length];
+    }
+
     function bindEvents() {
       el.themeToggle.addEventListener('click', () => applyTheme(el.html.dataset.theme === 'dark' ? 'light' : 'dark'));
       el.composerOpen.addEventListener('click', event => {
@@ -3562,6 +3811,20 @@
       });
       el.postContent.addEventListener('input', () => { el.postCharCount.textContent = String(el.postContent.value.length); });
       el.postForm.addEventListener('submit', submitPost);
+      el.pollToggle.addEventListener('click', () => {
+        const show = !el.pollBuilder.classList.contains('show');
+        el.pollBuilder.classList.toggle('show', show);
+        el.pollToggle.setAttribute('aria-expanded', String(show));
+        if (show) el.pollQuestion.focus();
+      });
+      el.pollRemove.addEventListener('click', closePollBuilder);
+      el.dailyPromptAnswer.addEventListener('click', () => {
+        el.composerCard.classList.add('open');
+        el.composerOpen.setAttribute('aria-expanded', 'true');
+        el.postContent.value = `${el.dailyPromptQuestion.textContent}\n\n`;
+        el.postCharCount.textContent = String(el.postContent.value.length);
+        el.postContent.focus();
+      });
       el.searchInput.addEventListener('input', () => {
         state.search = el.searchInput.value;
         scheduleFeedRender();
@@ -3573,6 +3836,11 @@
           item.classList.toggle('active', active);
           item.setAttribute('aria-selected', String(active));
         });
+        scheduleFeedRender();
+      }));
+      el.categoryFilters.forEach(button => button.addEventListener('click', () => {
+        state.category = button.dataset.category || 'all';
+        el.categoryFilters.forEach(item => item.classList.toggle('active', item === button));
         scheduleFeedRender();
       }));
       el.announcementClose.addEventListener('click', () => {
@@ -3595,6 +3863,7 @@
     function init() {
       applyIdentityUI();
       initTheme();
+      initDailyPrompt();
       bindEvents();
       initPresence();
       initAnnouncement();
