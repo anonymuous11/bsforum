@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#6d5dfc"> 
-  <meta name="description" content="Phòng tự học chung và diễn đàn học tập ẩn danh thời gian thực.">
-  <title>binhsonforum — Phòng tự học chung</title>
+  <meta name="description" content="Diễn đàn ẩn danh để chia sẻ, thảo luận và kết nối cộng đồng.">
+  <title>Diễn đàn ẩn danh</title>
 
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
@@ -1687,8 +1687,8 @@
       <a class="brand" href="./" aria-label="Về trang chủ" title="Về trang chủ">
         <div class="brand-mark" aria-hidden="true">B</div>
         <div class="brand-copy">
-          <div class="brand-title">binhsonforum</div>
-          <div class="brand-subtitle">Học cùng nhau · Tiến bộ mỗi ngày</div>
+          <div class="brand-title">Diễn đàn ẩn danh</div>
+          <div class="brand-subtitle">Chia sẻ tự do · Kết nối ẩn danh</div>
         </div>
       </a>
 
@@ -1720,8 +1720,8 @@
       <section class="panel">
         <h2 class="panel-title"><svg class="icon icon-sm"><use href="#i-shield"></use></svg>Nội quy cộng đồng</h2>
         <ol class="rule-list">
-          <li><span class="rule-index">01</span><span>Vào phòng để học, đặt mục tiêu rõ ràng và tôn trọng thời gian của nhau.</span></li>
-          <li><span class="rule-index">02</span><span>Không spam, quảng cáo hoặc nhập mục tiêu có nội dung không phù hợp.</span></li>
+          <li><span class="rule-index">01</span><span>Chia sẻ chân thành, trao đổi văn minh và tôn trọng mọi thành viên.</span></li>
+          <li><span class="rule-index">02</span><span>Không spam, quảng cáo hoặc đăng nội dung không phù hợp.</span></li>
           <li><span class="rule-index">03</span><span>Không chia sẻ họ tên, địa chỉ, số điện thoại hoặc thông tin nhạy cảm.</span></li>
           <li><span class="rule-index">04</span><span>Danh tính ẩn danh được giữ cố định trên thiết bị để tạo sự thân quen.</span></li>
         </ol>
@@ -1731,7 +1731,6 @@
         <h2 class="panel-title"><svg class="icon icon-sm"><use href="#i-users"></use></svg>Cộng đồng lúc này</h2>
         <div class="community-stat"><span class="stat-label">Đang trực tuyến</span><span class="stat-value"><i class="live-dot"></i><b id="onlineCountSide">0</b></span></div>
         <div class="community-stat"><span class="stat-label">Bài đang hiển thị</span><span class="stat-value" id="postCountSide">0</span></div>
-        <div class="community-stat"><span class="stat-label">Trong phòng học</span><span class="stat-value" id="studyCountSide">0</span></div>
       </section>
     </aside>
 
@@ -1775,24 +1774,6 @@
       </section>
 
 
-      <section class="study-mobile-entry" id="studyMobileEntry" aria-label="Mở phòng tự học">
-        <div class="study-mobile-main">
-          <div class="study-mobile-copy">
-            <div class="study-mobile-eyebrow"><i class="live-dot"></i><span id="studyCountMobile">0</span> người đang học</div>
-            <strong>Phòng tự học</strong>
-            <span><b id="studyTimerMobile">25:00</b> · <span id="studyPhaseMobile">Tập trung</span></span>
-          </div>
-          <div class="study-participant-preview study-mobile-participants">
-            <div class="study-participant-avatars" id="studyParticipantAvatarsMobile" aria-hidden="true"></div>
-            <span class="study-participant-names" id="studyParticipantNamesMobile">Chưa có ai trong phòng</span>
-          </div>
-        </div>
-        <button class="study-mobile-button" id="studyRoomShortcutMobile" type="button">
-          <svg class="icon icon-sm"><use href="#i-users"></use></svg>
-          <span id="studyRoomShortcutMobileLabel">Tham gia</span>
-        </button>
-      </section>
-
       <div class="feed-toolbar">
         <label class="search-wrap">
           <svg class="icon icon-sm"><use href="#i-search"></use></svg>
@@ -1810,44 +1791,15 @@
       </section>
     </section>
 
-    <aside class="sidebar right-sidebar" aria-label="Thông tin phòng học">
-
-      <section class="study-side-card" id="studySideCard" aria-labelledby="studySideTitle">
-        <div class="study-side-card-head">
-          <span class="study-side-card-title" id="studySideTitle">Phòng tự học</span>
-          <span class="study-side-card-icon"><svg class="icon"><use href="#i-book"></use></svg></span>
-        </div>
-        <div class="study-side-summary">
-          <div class="study-side-summary-item"><strong id="studyTimerSide">25:00</strong><span id="studyPhaseSide">Tập trung</span></div>
-          <div class="study-side-summary-item"><strong id="studyCountSideCard">0</strong><span>người đang học</span></div>
-        </div>
-        <div class="study-participant-preview">
-          <div class="study-participant-avatars" id="studyParticipantAvatarsSide" aria-hidden="true"></div>
-          <span class="study-participant-names" id="studyParticipantNamesSide">Chưa có ai trong phòng</span>
-        </div>
-        <button class="study-side-join" id="studyRoomShortcut" type="button">
-          <svg class="icon icon-sm"><use href="#i-users"></use></svg>
-          <span id="studyRoomShortcutLabel">Tham gia</span>
-        </button>
-      </section>
-
-      <section class="panel">
-        <h2 class="panel-title"><svg class="icon icon-sm"><use href="#i-target"></use></svg>Mẹo tập trung</h2>
-        <ul class="study-tip-list">
-          <li><span class="study-tip-icon">1</span><span>Đặt một mục tiêu đủ nhỏ để hoàn thành trong 25 phút.</span></li>
-          <li><span class="study-tip-icon">2</span><span>Tắt thông báo và chỉ mở tài liệu cần thiết cho phiên học.</span></li>
-          <li><span class="study-tip-icon">3</span><span>Đến giờ nghỉ, đứng dậy uống nước và tránh lướt mạng xã hội.</span></li>
-        </ul>
-      </section>
-
+    <aside class="sidebar right-sidebar" aria-label="Thông tin diễn đàn">
       <section class="panel">
         <h2 class="panel-title"><svg class="icon icon-sm"><use href="#i-info"></use></svg>Quyền riêng tư</h2>
-        <p class="privacy-note"><strong>Phòng học chỉ hiển thị danh tính ẩn danh, môn, lớp và mục tiêu.</strong> Không nhập họ tên, trường học, địa chỉ, số điện thoại hoặc dữ liệu nhạy cảm.</p>
+        <p class="privacy-note"><strong>Bài viết và bình luận sử dụng danh tính ẩn danh.</strong> Không đăng họ tên, trường học, địa chỉ, số điện thoại hoặc dữ liệu nhạy cảm.</p>
       </section>
     </aside>
   </main>
 
-  <div class="study-room-overlay" id="studyRoomModal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="studyRoomDialogTitle">
+  <div class="study-room-overlay" id="studyRoomModal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="studyRoomDialogTitle" hidden>
     <div class="study-room-dialog">
       <div class="study-room-modal-toolbar">
         <div>
@@ -3254,10 +3206,7 @@
     }
 
     function updatePageScrollLock() {
-      const locked = Boolean(
-        (el.studyRoomModal && el.studyRoomModal.classList.contains('show')) ||
-        (el.reportModal && el.reportModal.classList.contains('show'))
-      );
+      const locked = Boolean(el.reportModal && el.reportModal.classList.contains('show'));
       el.body.classList.toggle('no-scroll', locked);
     }
 
@@ -3634,35 +3583,12 @@
       el.postList.addEventListener('click', handleFeedClick);
       el.postList.addEventListener('submit', handleFeedSubmit);
 
-      el.studyJoinForm.addEventListener('submit', async event => {
-        event.preventDefault();
-        setButtonBusy(el.studyJoinButton, true, state.studyJoined ? 'Đang cập nhật…' : 'Đang tham gia…');
-        await upsertStudyMember(false);
-        setButtonBusy(el.studyJoinButton, false);
-        setStudyJoinedUI(state.studyJoined);
-      });
-      el.studyLeaveButton.addEventListener('click', leaveStudyRoom);
-      el.studyCompleteButton.addEventListener('click', toggleStudyComplete);
-      el.studySoundToggle.addEventListener('click', toggleStudySound);
-      el.studyMembersToggle.addEventListener('click', openStudyMembers);
-      el.studyChatForm.addEventListener('submit', submitStudyChat);
-      el.studyChatInput.addEventListener('input', () => {
-        el.studyChatCharCount.textContent = String(el.studyChatInput.value.length);
-        el.studyChatInput.style.height = 'auto';
-        el.studyChatInput.style.height = `${Math.min(el.studyChatInput.scrollHeight, 115)}px`;
-      });
-      el.studyRoomShortcut.addEventListener('click', openStudyRoomModal);
-      if (el.studyRoomShortcutMobile) el.studyRoomShortcutMobile.addEventListener('click', openStudyRoomModal);
-      el.studyRoomClose.addEventListener('click', closeStudyRoomModal);
-      [el.studySubject, el.studyGrade, el.studyGoal].forEach(input => input.addEventListener('change', () => saveStudyForm(getStudyFormData())));
-
       [el.reportClose, el.reportCancel].forEach(button => button.addEventListener('click', closeReport));
       el.reportSubmit.addEventListener('click', submitReport);
       el.reportModal.addEventListener('click', event => { if (event.target === el.reportModal) closeReport(); });
       document.addEventListener('keydown', event => {
         if (event.key !== 'Escape') return;
         if (el.reportModal.classList.contains('show')) closeReport();
-        else if (el.studyRoomModal.classList.contains('show')) closeStudyRoomModal();
       });
     }
 
@@ -3673,8 +3599,7 @@
       initPresence();
       initAnnouncement();
       initPosts();
-      initStudyRoom();
-      console.log('✅ binhsonforum và phòng tự học đã sẵn sàng.');
+      console.log('✅ Diễn đàn ẩn danh đã sẵn sàng.');
     }
 
     init();
