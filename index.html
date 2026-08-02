@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#6d5dfc"> 
   <meta name="description" content="Diễn đàn ẩn danh để chia sẻ, thảo luận và kết nối cộng đồng.">
-  <title>Diễn đàn ẩn danh</title>
+  <title>binhsonforum - Diễn đàn ẩn danh</title>
 
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
@@ -1045,9 +1045,6 @@
     .category-filter { flex: 0 0 auto; min-height: 31px; padding: 0 10px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); background: var(--surface-solid); font-size: 9px; font-weight: 800; cursor: pointer; }
     .category-filter.active { border-color: transparent; color: white; background: var(--primary); }
     .post-category { display: inline-flex; margin: 0 16px 8px; padding: 4px 8px; border-radius: 999px; color: var(--primary); background: var(--primary-soft); font-size: 8px; font-weight: 850; }
-    .reaction-bar { padding: 8px 12px; display: flex; gap: 6px; overflow-x: auto; border-top: 1px solid var(--line); scrollbar-width: none; }
-    .reaction-btn { flex: 0 0 auto; min-height: 31px; padding: 0 9px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); background: var(--surface-solid); font-size: 9px; font-weight: 800; cursor: pointer; }
-    .reaction-btn.active { border-color: color-mix(in srgb, var(--primary) 35%, var(--line)); color: var(--primary); background: var(--primary-soft); }
     .poll-card { margin: 4px 16px 14px; padding: 13px; border: 1px solid var(--line); border-radius: 15px; background: var(--surface-2); }
     .poll-question { margin-bottom: 10px; font-size: 12px; font-weight: 850; }
     .poll-options { display: grid; gap: 7px; }
@@ -1723,7 +1720,7 @@
       <a class="brand" href="./" aria-label="Về trang chủ" title="Về trang chủ">
         <div class="brand-mark" aria-hidden="true">B</div>
         <div class="brand-copy">
-          <div class="brand-title">Diễn đàn ẩn danh</div>
+          <div class="brand-title">binhsonforum</div>
           <div class="brand-subtitle">Chia sẻ tự do · Kết nối ẩn danh</div>
         </div>
       </a>
@@ -2186,7 +2183,6 @@
       feedRenderQueued: false,
       reportPostId: null,
       likePending: new Set(),
-      reactionPending: new Set(),
       votePending: new Set(),
       connectionSeen: false,
       listenerErrorShown: new Set(),
@@ -2496,12 +2492,6 @@
       'gop-y': '💡 Góp ý',
       'giai-tri': '🎉 Giải trí'
     };
-    const reactionTypes = {
-      'dong-cam': { emoji: '💜', label: 'Đồng cảm' },
-      'huu-ich': { emoji: '💡', label: 'Hữu ích' },
-      vui: { emoji: '😄', label: 'Vui' },
-      'co-len': { emoji: '🙌', label: 'Cố lên' }
-    };
     const dailyPrompts = [
       'Một điều nhỏ nào đã làm bạn vui hôm nay?',
       'Nếu được nhắn một câu cho bản thân của một năm trước, bạn sẽ nói gì?',
@@ -2512,14 +2502,8 @@
       'Hôm nay bạn muốn gửi lời cảm ơn đến ai?'
     ];
 
-    function reactionCount(post, type) {
-      const reaction = post.reactions && post.reactions[type];
-      return Math.max(0, Number(reaction && reaction.count) || 0);
-    }
-
     function totalEngagement(post) {
-      return (Number(post.likes) || 0) +
-        Object.keys(reactionTypes).reduce((total, type) => total + reactionCount(post, type), 0);
+      return Number(post.likes) || 0;
     }
 
     function scheduleFeedRender() {
@@ -2614,9 +2598,6 @@
           <span>${iconUse('i-heart')}<b data-like-count>0</b> lượt tương tác</span>
           <span>${iconUse('i-message')}<b data-comment-count>0</b> bình luận</span>
         </div>
-        <div class="reaction-bar">
-          ${Object.entries(reactionTypes).map(([type, reaction]) => `<button class="reaction-btn" type="button" data-action="reaction" data-reaction="${type}">${reaction.emoji} ${reaction.label} <b>0</b></button>`).join('')}
-        </div>
         <div class="post-actions">
           <button class="action-btn" type="button" data-action="like">${iconUse('i-heart')}<span>Thích</span></button>
           <button class="action-btn" type="button" data-action="comments" aria-expanded="false">${iconUse('i-message')}<span>Bình luận</span></button>
@@ -2686,14 +2667,6 @@
       category.textContent = categories[post.category] || '';
       $('[data-like-count]', card).textContent = String(totalEngagement(post));
       $('[data-comment-count]', card).textContent = String(countComments(post.comments));
-
-      $$('.reaction-btn', card).forEach(button => {
-        const type = button.dataset.reaction;
-        const reaction = post.reactions && post.reactions[type];
-        $('b', button).textContent = String(reactionCount(post, type));
-        button.classList.toggle('active', Boolean(reaction && reaction.users && reaction.users[identity.id]));
-        button.disabled = state.reactionPending.has(`${post.id}:${type}`);
-      });
 
       renderPoll(card, post);
 
@@ -2912,30 +2885,6 @@
         toast(describeFirebaseError(error, 'Không thể cập nhật lượt thích.'), 'error');
       } finally {
         state.likePending.delete(postId);
-        scheduleFeedRender();
-      }
-    }
-
-    async function reactToPost(postId, type) {
-      if (!reactionTypes[type]) return;
-      const pendingKey = `${postId}:${type}`;
-      if (state.reactionPending.has(pendingKey)) return;
-      state.reactionPending.add(pendingKey);
-      scheduleFeedRender();
-      try {
-        await refs.posts.child(postId).child('reactions').child(type).transaction(reaction => {
-          const next = reaction && typeof reaction === 'object' ? reaction : {};
-          next.users = next.users && typeof next.users === 'object' ? next.users : {};
-          if (next.users[identity.id]) delete next.users[identity.id];
-          else next.users[identity.id] = true;
-          next.count = Object.keys(next.users).length;
-          return next;
-        });
-      } catch (error) {
-        console.error(error);
-        toast(describeFirebaseError(error, 'Không thể cập nhật cảm xúc.'), 'error');
-      } finally {
-        state.reactionPending.delete(pendingKey);
         scheduleFeedRender();
       }
     }
@@ -3756,7 +3705,6 @@
       if (!postId) return;
       const action = actionButton.dataset.action;
       if (action === 'like') likePost(postId);
-      else if (action === 'reaction') reactToPost(postId, actionButton.dataset.reaction);
       else if (action === 'vote') votePoll(postId, actionButton.dataset.option);
       else if (action === 'comments') toggleComments(postId, card);
       else if (action === 'report') openReport(postId);
