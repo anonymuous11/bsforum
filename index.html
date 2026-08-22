@@ -22,15 +22,15 @@
       --muted: #696c7e;
       --subtle: #9598a9;
       --line: rgba(20, 21, 35, .09);
-      --primary: #6d5dfc;
-      --primary-strong: #5848e8;
+      --primary: #667eea;
+      --primary-strong: #764ba2;
       --primary-soft: #efedff;
-      --cyan: #18b6c9;
-      --success: #20a56b;
+      --cyan: #06b7d4;
+      --success: #10b981;
       --success-soft: #e8f8f1;
-      --warning: #e78a22;
-      --warning-soft: #fff5e8;
-      --danger: #e05269;
+      --warning: #f59e0b;
+      --warning-soft: #fff7e6;
+      --danger: #ef4444;
       --danger-soft: #fff0f3;
       --shadow-sm: 0 8px 24px rgba(31, 35, 58, .06);
       --shadow-md: 0 18px 55px rgba(31, 35, 58, .11);
@@ -52,16 +52,16 @@
       --muted: #aaaec1;
       --subtle: #777b90;
       --line: rgba(255, 255, 255, .09);
-      --primary: #8b7cff;
-      --primary-strong: #a095ff;
-      --primary-soft: rgba(139, 124, 255, .15);
-      --cyan: #35c7d7;
-      --success: #47c990;
-      --success-soft: rgba(71, 201, 144, .12);
-      --warning: #ffad4c;
-      --warning-soft: rgba(255, 173, 76, .12);
-      --danger: #ff7188;
-      --danger-soft: rgba(255, 113, 136, .13);
+      --primary: #a78bfa;
+      --primary-strong: #8b7cff;
+      --primary-soft: rgba(139, 124, 255, .18);
+      --cyan: #22d3ee;
+      --success: #34d399;
+      --success-soft: rgba(52, 211, 153, .15);
+      --warning: #fb920c;
+      --warning-soft: rgba(251, 146, 12, .15);
+      --danger: #f87171;
+      --danger-soft: rgba(248, 113, 113, .16);
       --shadow-sm: 0 8px 24px rgba(0, 0, 0, .16);
       --shadow-md: 0 18px 55px rgba(0, 0, 0, .28);
       --shadow-lg: 0 28px 90px rgba(0, 0, 0, .42);
@@ -73,8 +73,8 @@
       margin: 0;
       min-height: 100vh;
       background:
-        radial-gradient(circle at 10% -10%, rgba(109, 93, 252, .17), transparent 32rem),
-        radial-gradient(circle at 90% 20%, rgba(24, 182, 201, .11), transparent 28rem),
+        radial-gradient(circle at 12% -8%, rgba(102, 126, 234, .14), transparent 34rem),
+        radial-gradient(circle at 88% 18%, rgba(6, 182, 212, .10), transparent 30rem),
         var(--bg);
       color: var(--text);
       font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -268,7 +268,9 @@
       background: var(--surface);
       box-shadow: var(--shadow-sm);
       backdrop-filter: blur(16px);
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
     }
+    .card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: var(--primary); }
     .panel { padding: 17px; }
     .panel-title { margin: 0 0 13px; font-size: 13px; font-weight: 800; letter-spacing: .015em; display: flex; align-items: center; gap: 8px; }
     .rule-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 11px; }
@@ -398,6 +400,7 @@
       font-size: 12px;
       font-weight: 850;
       box-shadow: inset 0 0 0 1px rgba(255,255,255,.18);
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     }
     .composer-placeholder { min-width: 0; flex: 1; padding: 11px 15px; border-radius: 14px; color: var(--muted); background: var(--surface-2); font-size: 13px; }
     .composer-trigger { width: 38px; height: 38px; border: 0; border-radius: 12px; display: grid; place-items: center; background: var(--primary-soft); color: var(--primary); cursor: pointer; }
@@ -437,8 +440,8 @@
     .sort-tab.active { color: var(--primary); background: var(--primary-soft); }
 
     .feed { display: grid; gap: 14px; }
-    .post-card { overflow: hidden; transition: transform .18s ease, box-shadow .18s ease; }
-    .post-card:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); }
+    .post-card { overflow: hidden; transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease; }
+    .post-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); border-color: var(--primary); }
     .post-head { padding: 15px 16px 10px; display: flex; align-items: flex-start; gap: 11px; }
     .post-identity { min-width: 0; flex: 1; }
     .post-author-line { display: flex; align-items: center; flex-wrap: wrap; gap: 7px; }
