@@ -189,20 +189,38 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial
 </div>
 
 <script>
-// 🔐 Mật khẩu admin
-const ADMIN_PASSWORD = "admin0099";
+// 🔐 Hash SHA-256 của mật khẩu admin (không lưu plaintext trong code)
+const ADMIN_PASSWORD_HASH = "9a02d25e101204272d753debb2e5475bac453c47eb8d10882d0c17da8a06c256";
 
-// Kiểm tra đăng nhập
-if (!sessionStorage.getItem("admin_logged_in")) {
-    const password = prompt("🔐 Nhập mật khẩu quản trị:");
-    if (password !== ADMIN_PASSWORD) {
-        document.body.innerHTML = "<div style='text-align:center;padding:50px;color:white;background:#1e1e2f;height:100vh'><h1>⛔ Truy cập bị từ chối</h1><p>Bạn không có quyền truy cập trang này.</p></div>";
-        throw new Error("Access Denied");
-    }
-    sessionStorage.setItem("admin_logged_in", "true");
+async function sha256(text) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(text);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
+function denyAccess() {
+    document.body.innerHTML = "<div style='text-align:center;padding:50px;color:white;background:#1e1e2f;height:100vh'><h1>⛔ Truy cập bị từ chối</h1><p>Bạn không có quyền truy cập trang này.</p></div>";
+}
+
+// Kiểm tra đăng nhập rồi mới khởi tạo admin panel
+(async function checkLoginAndInit() {
+    if (!sessionStorage.getItem("admin_logged_in")) {
+        const password = prompt("🔐 Nhập mật khẩu quản trị:");
+        if (!password) { denyAccess(); return; }
+        const hash = await sha256(password);
+        if (hash !== ADMIN_PASSWORD_HASH) { denyAccess(); return; }
+        sessionStorage.setItem("admin_logged_in", "true");
+    }
+    // Xác thực thành công → khởi tạo admin panel
+    initAdminPanel();
+})();
+
+function initAdminPanel() {
 // 🔥 Firebase config
+// ⚠️ API key này là public identifier (Google thiết kế vậy cho client-side apps)
+// Bảo mật thực sự nằm ở Firebase Security Rules — xem file SECURITY_RULES.md
 const firebaseConfig = {
     apiKey: "AIzaSyB3xZIYvP5Pq1SXx5uqxkXqQ3LxW7Qn2Xk",
     authDomain: "binhson-confessions.firebaseapp.com",
@@ -632,6 +650,19 @@ loadReports();
 loadAnnouncements();
 
 console.log("✅ Admin Panel đã sẵn sàng! - Duyệt bài ngay lập tức không cần xác nhận");
+
+// Expose các hàm ra global scope để onclick trong HTML gọi được
+window.switchTab = switchTab;
+window.filterPending = filterPending;
+window.approvePost = approvePost;
+window.rejectPost = rejectPost;
+window.filterPosts = filterPosts;
+window.deletePost = deletePost;
+window.deleteReport = deleteReport;
+window.sendAnnouncement = sendAnnouncement;
+window.deleteAnnouncement = deleteAnnouncement;
+window.logout = logout;
+} // end initAdminPanel
 </script>
 </body>
 </html>

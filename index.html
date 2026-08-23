@@ -2142,6 +2142,8 @@
       return;
     }
 
+    // ⚠️ API key này là public identifier (Google thiết kế vậy cho client-side apps)
+    // Bảo mật thực sự nằm ở Firebase Security Rules — xem file SECURITY_RULES.md
     const firebaseConfig = {
       apiKey: 'AIzaSyB3xZIYvP5Pq1SXx5uqxkXqQ3LxW7Qn2Xk',
       authDomain: 'binhson-confessions.firebaseapp.com',
