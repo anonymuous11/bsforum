@@ -14,14 +14,14 @@
     :root {
       color-scheme: light;
       --bg: #f5f6fb;
-      --surface: rgba(255, 255, 255, .88);
+      --surface: #ffffff;
       --surface-solid: #ffffff;
       --surface-2: #f0f2f8;
       --surface-3: #e8ebf4;
       --text: #171824;
       --muted: #696c7e;
       --subtle: #9598a9;
-      --line: rgba(20, 21, 35, .09);
+      --line: rgba(20, 21, 35, .08);
       --primary: #667eea;
       --primary-strong: #764ba2;
       --primary-soft: #efedff;
@@ -32,9 +32,9 @@
       --warning-soft: #fff7e6;
       --danger: #ef4444;
       --danger-soft: #fff0f3;
-      --shadow-sm: 0 8px 24px rgba(31, 35, 58, .06);
-      --shadow-md: 0 18px 55px rgba(31, 35, 58, .11);
-      --shadow-lg: 0 28px 90px rgba(31, 35, 58, .18);
+      --shadow-sm: 0 2px 8px rgba(31, 35, 58, .04), 0 1px 2px rgba(31, 35, 58, .02);
+      --shadow-md: 0 8px 20px rgba(31, 35, 58, .07), 0 2px 6px rgba(31, 35, 58, .04);
+      --shadow-lg: 0 14px 32px rgba(31, 35, 58, .10), 0 4px 10px rgba(31, 35, 58, .05);
       --radius-sm: 12px;
       --radius-md: 18px;
       --radius-lg: 24px;
@@ -44,14 +44,14 @@
     html[data-theme="dark"] {
       color-scheme: dark;
       --bg: #0e0f16;
-      --surface: rgba(25, 27, 39, .86);
+      --surface: #191b27;
       --surface-solid: #191b27;
       --surface-2: #222534;
       --surface-3: #2b2e40;
       --text: #f5f6fb;
       --muted: #aaaec1;
       --subtle: #777b90;
-      --line: rgba(255, 255, 255, .09);
+      --line: rgba(255, 255, 255, .08);
       --primary: #a78bfa;
       --primary-strong: #8b7cff;
       --primary-soft: rgba(139, 124, 255, .18);
@@ -62,30 +62,38 @@
       --warning-soft: rgba(251, 146, 12, .15);
       --danger: #f87171;
       --danger-soft: rgba(248, 113, 113, .16);
-      --shadow-sm: 0 8px 24px rgba(0, 0, 0, .16);
-      --shadow-md: 0 18px 55px rgba(0, 0, 0, .28);
-      --shadow-lg: 0 28px 90px rgba(0, 0, 0, .42);
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, .20);
+      --shadow-md: 0 8px 22px rgba(0, 0, 0, .28);
+      --shadow-lg: 0 14px 32px rgba(0, 0, 0, .38);
     }
 
     *, *::before, *::after { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
+    html { scroll-behavior: auto; }
+    @media (prefers-reduced-motion: no-preference) {
+      html:focus-within { scroll-behavior: smooth; }
+    }
     body {
       margin: 0;
       min-height: 100vh;
       background:
-        radial-gradient(circle at 12% -8%, rgba(102, 126, 234, .14), transparent 34rem),
-        radial-gradient(circle at 88% 18%, rgba(6, 182, 212, .10), transparent 30rem),
+        radial-gradient(circle at 12% -8%, rgba(102, 126, 234, .12), transparent 34rem),
+        radial-gradient(circle at 88% 18%, rgba(6, 182, 212, .08), transparent 30rem),
         var(--bg);
       color: var(--text);
       font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       line-height: 1.5;
       -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
       padding-bottom: env(safe-area-inset-bottom);
     }
     body.no-scroll { overflow: hidden; }
-    button, input, textarea { font: inherit; }
+    button, input, textarea, select { font: inherit; }
     button { color: inherit; }
-    button, [role="button"] { -webkit-tap-highlight-color: transparent; }
+    button, [role="button"], a, input, select, textarea {
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
     a { color: inherit; }
     svg { display: block; }
     ::selection { background: rgba(109, 93, 252, .24); }
@@ -101,9 +109,12 @@
       z-index: 100;
       height: var(--header-h);
       border-bottom: 1px solid var(--line);
-      background: color-mix(in srgb, var(--surface-solid) 88%, transparent);
-      box-shadow: 0 8px 28px rgba(20, 22, 38, .06);
-      backdrop-filter: blur(20px) saturate(160%);
+      background: color-mix(in srgb, var(--surface-solid) 92%, transparent);
+      box-shadow: 0 4px 20px rgba(20, 22, 38, .05);
+      -webkit-backdrop-filter: blur(14px) saturate(150%);
+      backdrop-filter: blur(14px) saturate(150%);
+      transform: translateZ(0);
+      will-change: transform;
     }
     .header-inner {
       width: 100%;
@@ -267,10 +278,11 @@
       border-radius: var(--radius-md);
       background: var(--surface);
       box-shadow: var(--shadow-sm);
-      backdrop-filter: blur(16px);
-      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+      transition: transform .18s cubic-bezier(0.16, 1, 0.3, 1), box-shadow .18s ease;
     }
-    .card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: var(--primary); }
+    @media (hover: hover) and (pointer: fine) {
+      .card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: var(--primary); }
+    }
     .panel { padding: 17px; }
     .panel-title { margin: 0 0 13px; font-size: 13px; font-weight: 800; letter-spacing: .015em; display: flex; align-items: center; gap: 8px; }
     .rule-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 11px; }
@@ -280,7 +292,7 @@
     .community-stat:last-child { border-bottom: 0; padding-bottom: 0; }
     .stat-label { color: var(--muted); font-size: 12px; }
     .stat-value { font-size: 13px; font-weight: 800; display: flex; align-items: center; gap: 6px; }
-    .live-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--success); box-shadow: 0 0 0 5px var(--success-soft); animation: breathe 1.8s ease-in-out infinite; }
+    .live-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--success); box-shadow: 0 0 0 5px var(--success-soft); animation: breathe 1.8s ease-in-out infinite; transform: translateZ(0); will-change: transform, opacity; }
     @keyframes breathe { 50% { transform: scale(.76); opacity: .6; } }
 
     .main-column { min-width: 0; display: grid; gap: 16px; }
@@ -436,12 +448,21 @@
     }
     .search-input:focus { border-color: rgba(109,93,252,.45); box-shadow: 0 0 0 4px rgba(109,93,252,.09); }
     .sort-tabs { display: flex; padding: 4px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); box-shadow: var(--shadow-sm); }
-    .sort-tab { height: 34px; border: 0; border-radius: 10px; padding: 0 12px; background: transparent; color: var(--muted); font-size: 11px; font-weight: 800; cursor: pointer; }
+    .sort-tab { height: 34px; border: 0; border-radius: 10px; padding: 0 12px; background: transparent; color: var(--muted); font-size: 11px; font-weight: 800; cursor: pointer; touch-action: manipulation; transition: background .15s ease, color .15s ease, transform .12s ease; }
     .sort-tab.active { color: var(--primary); background: var(--primary-soft); }
+    .sort-tab:active { transform: scale(0.95); }
 
     .feed { display: grid; gap: 14px; }
-    .post-card { overflow: hidden; transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease; }
-    .post-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); border-color: var(--primary); }
+    .post-card {
+      overflow: hidden;
+      content-visibility: auto;
+      contain-intrinsic-size: 0 220px;
+      contain: layout style;
+      transition: transform .18s cubic-bezier(0.16, 1, 0.3, 1), box-shadow .18s ease;
+    }
+    @media (hover: hover) and (pointer: fine) {
+      .post-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: var(--primary); }
+    }
     .post-head { padding: 15px 16px 10px; display: flex; align-items: flex-start; gap: 11px; }
     .post-identity { min-width: 0; flex: 1; }
     .post-author-line { display: flex; align-items: center; flex-wrap: wrap; gap: 7px; }
@@ -449,16 +470,62 @@
     .post-number { padding: 3px 7px; border-radius: 8px; color: var(--primary); background: var(--primary-soft); font-size: 9px; font-weight: 900; letter-spacing: .04em; }
     .today-badge { padding: 3px 7px; border-radius: 8px; color: var(--success); background: var(--success-soft); font-size: 9px; font-weight: 850; }
     .post-time { margin-top: 2px; color: var(--subtle); font-size: 10px; }
-    .more-btn { width: 34px; height: 34px; border: 0; border-radius: 11px; display: grid; place-items: center; color: var(--muted); background: transparent; cursor: pointer; }
-    .more-btn:hover { background: var(--surface-2); }
+    .more-btn { width: 34px; height: 34px; border: 0; border-radius: 11px; display: grid; place-items: center; color: var(--muted); background: transparent; cursor: pointer; touch-action: manipulation; transition: background .15s ease, transform .12s ease; }
+    @media (hover: hover) and (pointer: fine) {
+      .more-btn:hover { background: var(--surface-2); }
+    }
+    .more-btn:active { transform: scale(0.92); }
     .post-content { padding: 3px 16px 16px; color: var(--text); font-size: 14px; line-height: 1.62; white-space: pre-wrap; overflow-wrap: anywhere; }
     .post-stats { padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; gap: 12px; border-top: 1px solid var(--line); color: var(--muted); font-size: 10px; }
     .post-stats span { display: inline-flex; align-items: center; gap: 5px; }
     .post-actions { padding: 7px 9px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; border-top: 1px solid var(--line); }
-    .action-btn { min-height: 38px; border: 0; border-radius: 11px; display: flex; align-items: center; justify-content: center; gap: 7px; background: transparent; color: var(--muted); font-size: 11px; font-weight: 800; cursor: pointer; }
-    .action-btn:hover { color: var(--text); background: var(--surface-2); }
+    .action-btn {
+      min-height: 38px;
+      border: 0;
+      border-radius: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      background: transparent;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+      touch-action: manipulation;
+      transition: color .15s ease, background .15s ease, transform .12s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @media (hover: hover) and (pointer: fine) {
+      .action-btn:hover { color: var(--text); background: var(--surface-2); }
+      .action-btn.report:hover { color: var(--danger); background: var(--danger-soft); }
+    }
+    .action-btn:active { transform: scale(0.95); }
     .action-btn.liked { color: var(--primary); background: var(--primary-soft); }
-    .action-btn.report:hover { color: var(--danger); background: var(--danger-soft); }
+    .action-btn.liked svg { transform: scale(1.15); transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+
+    .load-more-wrap { display: flex; justify-content: center; padding: 12px 0 20px; }
+    .load-more-btn {
+      min-height: 42px;
+      padding: 0 20px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--surface);
+      color: var(--primary);
+      font-size: 12.5px;
+      font-weight: 750;
+      box-shadow: var(--shadow-sm);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      touch-action: manipulation;
+      transition: transform .18s cubic-bezier(0.16, 1, 0.3, 1), background .18s ease, box-shadow .18s ease;
+    }
+    @media (hover: hover) and (pointer: fine) {
+      .load-more-btn:hover { transform: translateY(-1px); background: var(--surface-2); box-shadow: var(--shadow-md); }
+    }
+    .load-more-btn:active { transform: scale(0.96); }
 
     .comments { display: none; padding: 14px 16px 16px; border-top: 1px solid var(--line); background: color-mix(in srgb, var(--surface-2) 56%, transparent); }
     .comments.open { display: block; animation: reveal .2s ease; }
@@ -597,7 +664,6 @@
       stroke-dasharray: 339.292;
       stroke-dashoffset: 0;
       transition: stroke-dashoffset .8s linear;
-      filter: drop-shadow(0 0 7px rgba(255,255,255,.28));
     }
     .timer-copy { position: relative; z-index: 1; }
     .study-timer { font-size: 34px; line-height: 1; font-weight: 900; letter-spacing: -.045em; font-variant-numeric: tabular-nums; }
@@ -617,7 +683,9 @@
       font-size: 9px;
       font-weight: 800;
       cursor: pointer;
+      touch-action: manipulation;
     }
+    .sound-toggle:active { transform: scale(0.96); }
     .study-join-card { padding: 17px; }
     .study-form-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 13px; }
     .study-form-title { font-size: 13px; font-weight: 850; }
@@ -661,10 +729,14 @@
       font-size: 10px;
       font-weight: 850;
       cursor: pointer;
-      transition: transform .18s ease, opacity .18s ease, background .18s ease;
+      touch-action: manipulation;
+      transition: transform .18s cubic-bezier(0.16, 1, 0.3, 1), opacity .18s ease, background .18s ease;
     }
     .study-join-btn { color: #5144da; background: white; box-shadow: 0 10px 22px rgba(21,19,70,.16); }
-    .study-join-btn:hover, .study-complete-btn:hover { transform: translateY(-1px); }
+    @media (hover: hover) and (pointer: fine) {
+      .study-join-btn:hover, .study-complete-btn:hover { transform: translateY(-1px); }
+    }
+    .study-join-btn:active, .study-complete-btn:active, .study-leave-btn:active { transform: scale(0.96); }
     .study-leave-btn { display: none; width: 42px; padding: 0; color: white; border: 1px solid rgba(255,255,255,.2); background: rgba(255,255,255,.1); }
     .study-leave-btn.show { display: inline-flex; }
     .study-complete-btn { display: none; width: 100%; margin-top: 8px; color: white; border: 1px solid rgba(255,255,255,.2); background: rgba(43,218,139,.2); }
@@ -972,12 +1044,16 @@
       color: var(--muted);
       background: var(--surface-2);
       font-size: 13px;
+      touch-action: manipulation;
       transition: background .18s ease, border-color .18s ease;
     }
-    .composer-post-entry:hover .composer-facebook-input {
-      border-color: color-mix(in srgb, var(--primary) 18%, var(--line));
-      background: var(--surface-3);
+    @media (hover: hover) and (pointer: fine) {
+      .composer-post-entry:hover .composer-facebook-input {
+        border-color: color-mix(in srgb, var(--primary) 18%, var(--line));
+        background: var(--surface-3);
+      }
     }
+    .composer-post-entry:active .composer-facebook-input { background: var(--surface-3); }
     .composer-facebook-actions {
       margin-top: 9px;
       padding-top: 8px;
@@ -996,15 +1072,19 @@
       color: var(--muted);
       font-size: 9px;
       font-weight: 800;
-      transition: color .18s ease, background .18s ease;
+      touch-action: manipulation;
+      transition: color .18s ease, background .18s ease, transform .12s ease;
     }
-    .composer-post-entry:hover .composer-facebook-action {
-      color: var(--text);
+    @media (hover: hover) and (pointer: fine) {
+      .composer-post-entry:hover .composer-facebook-action {
+        color: var(--text);
+      }
+      .composer-facebook-action:hover {
+        color: var(--primary) !important;
+        background: var(--primary-soft);
+      }
     }
-    .composer-facebook-action:hover {
-      color: var(--primary) !important;
-      background: var(--primary-soft);
-    }
+    .composer-facebook-action:active { transform: scale(0.96); }
     .composer.open .composer-facebook-actions { display: none; }
     .composer-post-panel .composer-form {
       position: relative;
@@ -1043,9 +1123,10 @@
     .poll-builder input { width: 100%; height: 38px; padding: 0 11px; border: 1px solid var(--line); border-radius: 10px; color: var(--text); background: var(--surface-solid); outline: none; font-size: 10px; }
     .poll-builder-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 10px; font-weight: 850; }
     .poll-remove { border: 0; color: var(--muted); background: transparent; font-size: 9px; font-weight: 800; cursor: pointer; }
-    .category-filters { display: flex; gap: 6px; overflow-x: auto; padding: 1px 0 5px; scrollbar-width: none; }
+    .category-filters { display: flex; gap: 6px; overflow-x: auto; padding: 1px 0 5px; scrollbar-width: none; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; }
     .category-filters::-webkit-scrollbar { display: none; }
-    .category-filter { flex: 0 0 auto; min-height: 31px; padding: 0 10px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); background: var(--surface-solid); font-size: 9px; font-weight: 800; cursor: pointer; }
+    .category-filter { flex: 0 0 auto; min-height: 31px; padding: 0 10px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); background: var(--surface-solid); font-size: 9px; font-weight: 800; cursor: pointer; touch-action: manipulation; transition: background .15s ease, color .15s ease, transform .12s ease; }
+    .category-filter:active { transform: scale(0.94); }
     .category-filter.active { border-color: transparent; color: white; background: var(--primary); }
     .post-category { display: inline-flex; margin: 0 16px 8px; padding: 4px 8px; border-radius: 999px; color: var(--primary); background: var(--primary-soft); font-size: 8px; font-weight: 850; }
     .poll-card { margin: 4px 16px 14px; padding: 13px; border: 1px solid var(--line); border-radius: 15px; background: var(--surface-2); }
@@ -1093,11 +1174,13 @@
       width: min(920px, calc(100vw - 36px));
       max-height: calc(100vh - 36px);
       overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
       overscroll-behavior: contain;
       border: 1px solid var(--line);
       border-radius: 28px;
       background: var(--surface-solid);
-      box-shadow: 0 38px 110px rgba(0, 0, 0, .48);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, .36);
+      transform: translateZ(0);
       animation: studyDialogIn .24s cubic-bezier(.2,.8,.2,1);
     }
     @keyframes studyDialogIn { from { opacity: 0; transform: translateY(12px) scale(.975); } }
@@ -1112,13 +1195,18 @@
       justify-content: space-between;
       gap: 14px;
       border-bottom: 1px solid var(--line);
-      background: color-mix(in srgb, var(--surface-solid) 88%, transparent);
-      backdrop-filter: blur(18px) saturate(150%);
+      background: color-mix(in srgb, var(--surface-solid) 92%, transparent);
+      -webkit-backdrop-filter: blur(14px) saturate(150%);
+      backdrop-filter: blur(14px) saturate(150%);
+      transform: translateZ(0);
     }
     .study-room-modal-eyebrow { display: flex; align-items: center; gap: 7px; color: var(--success); font-size: 9px; font-weight: 850; text-transform: uppercase; letter-spacing: .1em; }
     .study-room-modal-title { margin-top: 1px; font-size: 15px; font-weight: 900; letter-spacing: -.02em; }
-    .study-room-modal-close { width: 40px; height: 40px; flex: 0 0 auto; border: 1px solid var(--line); border-radius: 13px; display: grid; place-items: center; color: var(--text); background: var(--surface-2); cursor: pointer; transition: transform .18s ease, background .18s ease; }
-    .study-room-modal-close:hover { transform: translateY(-1px); background: var(--surface-3); }
+    .study-room-modal-close { width: 40px; height: 40px; flex: 0 0 auto; border: 1px solid var(--line); border-radius: 13px; display: grid; place-items: center; color: var(--text); background: var(--surface-2); cursor: pointer; touch-action: manipulation; transition: transform .18s cubic-bezier(0.16, 1, 0.3, 1), background .18s ease; }
+    @media (hover: hover) and (pointer: fine) {
+      .study-room-modal-close:hover { transform: translateY(-1px); background: var(--surface-3); }
+    }
+    .study-room-modal-close:active { transform: scale(0.92); }
     .study-room-dialog > .study-room { border: 0; border-radius: 0; box-shadow: none; }
 
     /* Thẻ phòng học thu gọn ở thanh bên */
@@ -1403,6 +1491,7 @@
     @media (max-width: 800px) {
       html, body { width: 100%; overflow-x: hidden; }
       body { -webkit-text-size-adjust: 100%; }
+      input, textarea, select { font-size: 16px !important; }
 
       .app-header {
         height: auto;
@@ -2200,7 +2289,10 @@
       soundEnabled: false,
       lastMemberRender: 0,
       studyChatMessages: new Map(),
-      studyChatCooldownTimer: null
+      studyChatCooldownTimer: null,
+      displayLimit: 25,
+      loadMoreNode: null,
+      studyChatRenderQueued: false
     };
 
     const limits = {
@@ -2327,11 +2419,22 @@
       return new Date(numberTimestamp(timestamp)).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
     }
 
+    let _cachedTodayKey = '';
+    let _cachedTodayTime = 0;
+    function getTodayKey() {
+      const now = Date.now();
+      if (!_cachedTodayKey || now - _cachedTodayTime > 60000) {
+        const d = new Date(now);
+        _cachedTodayKey = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+        _cachedTodayTime = now;
+      }
+      return _cachedTodayKey;
+    }
+
     function isToday(timestamp) {
       if (!timestamp) return true;
       const a = new Date(numberTimestamp(timestamp));
-      const b = new Date();
-      return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+      return `${a.getFullYear()}-${a.getMonth()}-${a.getDate()}` === getTodayKey();
     }
 
     function normalizeText(value, max) {
@@ -2535,6 +2638,49 @@
       return posts;
     }
 
+    function updateLoadMore(total, currentLimit) {
+      if (total <= currentLimit) {
+        if (state.loadMoreNode) {
+          state.loadMoreNode.remove();
+          state.loadMoreNode = null;
+        }
+        return;
+      }
+
+      if (!state.loadMoreNode) {
+        const wrap = document.createElement('div');
+        wrap.className = 'load-more-wrap';
+        wrap.innerHTML = `<button type="button" class="load-more-btn"><svg class="icon icon-sm" style="display:inline-block;vertical-align:middle;margin-right:6px"><use href="#i-spark"></use></svg><span></span></button>`;
+        const btn = $('button', wrap);
+        btn.addEventListener('click', () => {
+          state.displayLimit = (state.displayLimit || 25) + 25;
+          renderFeed();
+        });
+
+        if ('IntersectionObserver' in window) {
+          const observer = new IntersectionObserver(entries => {
+            if (entries[0] && entries[0].isIntersecting) {
+              if (state.postsLoaded && total > (state.displayLimit || 25)) {
+                state.displayLimit = (state.displayLimit || 25) + 25;
+                renderFeed();
+              }
+            }
+          }, { rootMargin: '300px' });
+          observer.observe(wrap);
+        }
+
+        state.loadMoreNode = wrap;
+      }
+
+      const remaining = total - currentLimit;
+      const label = $('span', state.loadMoreNode);
+      if (label) label.textContent = `Xem thêm bài viết (còn ${remaining} bài)`;
+
+      if (el.postList.lastElementChild !== state.loadMoreNode) {
+        el.postList.appendChild(state.loadMoreNode);
+      }
+    }
+
     function renderFeed() {
       const posts = getVisiblePosts();
       if (el.postCountSide) el.postCountSide.textContent = String(posts.length);
@@ -2543,6 +2689,10 @@
 
       if (!posts.length) {
         state.cards.forEach(card => card.remove());
+        if (state.loadMoreNode) {
+          state.loadMoreNode.remove();
+          state.loadMoreNode = null;
+        }
         const oldEmpty = $('[data-feed-empty]', el.postList);
         if (!oldEmpty) {
           const empty = document.createElement('div');
@@ -2558,8 +2708,11 @@
       if (empty) empty.remove();
       $$('.skeleton', el.postList).forEach(node => node.remove());
 
-      const visibleIds = new Set(posts.map(post => post.id));
-      posts.forEach((post, index) => {
+      const limit = state.displayLimit || 25;
+      const slicedPosts = posts.slice(0, limit);
+      const visibleIds = new Set(slicedPosts.map(post => post.id));
+
+      slicedPosts.forEach((post, index) => {
         let card = state.cards.get(post.id);
         if (!card) {
           card = buildPostCard(post.id);
@@ -2573,6 +2726,8 @@
       Array.from(el.postList.children).forEach(node => {
         if (node.classList.contains('post-card') && !visibleIds.has(node.dataset.postId)) node.remove();
       });
+
+      updateLoadMore(posts.length, limit);
     }
 
     function buildPostCard(postId) {
@@ -2617,28 +2772,55 @@
           <div class="comment-list" data-comment-list><div class="empty-comments">Chưa có bình luận. Hãy là người đầu tiên.</div></div>
         </section>`;
 
-      const commentAvatar = $('.comment-avatar', card);
-      commentAvatar.textContent = avatarLetters(identity.name);
-      commentAvatar.style.background = avatarGradient(identity.id);
+      card._refs = {
+        avatar: $('.post-avatar', card),
+        author: $('.post-author', card),
+        number: $('.post-number', card),
+        today: $('.today-badge', card),
+        time: $('.post-time', card),
+        content: $('.post-content', card),
+        category: $('.post-category', card),
+        pollCard: $('.poll-card', card),
+        pollQuestion: $('.poll-question', card),
+        pollOptions: $('.poll-options', card),
+        pollMeta: $('.poll-meta', card),
+        likeCount: $('[data-like-count]', card),
+        commentCount: $('[data-comment-count]', card),
+        likeBtn: $('[data-action="like"]', card),
+        commentsBtn: $('[data-action="comments"]', card),
+        commentsSec: $('.comments', card),
+        commentAvatar: $('.comment-avatar', card)
+      };
+
+      card._refs.commentAvatar.textContent = avatarLetters(identity.name);
+      card._refs.commentAvatar.style.background = avatarGradient(identity.id);
       return card;
     }
 
     function renderPoll(card, post) {
-      const pollCard = $('.poll-card', card);
+      const r = card._refs;
+      if (!r || !r.pollCard) return;
       const poll = post.poll;
       const options = poll && poll.options && typeof poll.options === 'object' ? Object.entries(poll.options) : [];
       if (!poll || !poll.question || options.length < 2) {
-        pollCard.hidden = true;
+        if (!r.pollCard.hidden) r.pollCard.hidden = true;
         return;
       }
-      pollCard.hidden = false;
-      $('.poll-question', pollCard).textContent = String(poll.question);
+      if (r.pollCard.hidden) r.pollCard.hidden = false;
+
       const votes = poll.votes && typeof poll.votes === 'object' ? poll.votes : {};
       const voteValues = Object.values(votes);
       const total = voteValues.length;
       const selected = votes[identity.id] || '';
-      const optionsNode = $('.poll-options', pollCard);
-      optionsNode.innerHTML = '';
+      const pending = state.votePending.has(post.id);
+
+      const pollFingerprint = `${total}_${selected}_${pending}_${options.length}`;
+      if (r.pollCard.dataset.pollFingerprint === pollFingerprint) return;
+      r.pollCard.dataset.pollFingerprint = pollFingerprint;
+
+      r.pollQuestion.textContent = String(poll.question);
+      r.pollOptions.innerHTML = '';
+      const fragment = document.createDocumentFragment();
       options.forEach(([key, value]) => {
         const count = voteValues.filter(optionKey => optionKey === key).length;
         const percent = total ? Math.round(count * 100 / total) : 0;
@@ -2647,48 +2829,62 @@
         button.type = 'button';
         button.dataset.action = 'vote';
         button.dataset.option = key;
-        button.disabled = state.votePending.has(post.id);
+        button.disabled = pending;
         button.innerHTML = `<i class="poll-option-progress"></i><span></span><strong>${percent}%</strong>`;
         $('.poll-option-progress', button).style.width = `${percent}%`;
         $('span', button).textContent = String(value);
-        optionsNode.appendChild(button);
+        fragment.appendChild(button);
       });
-      $('.poll-meta', pollCard).textContent = `${total} lượt bình chọn${selected ? ' · Bạn đã bình chọn' : ' · Chọn một phương án'}`;
+      r.pollOptions.appendChild(fragment);
+      r.pollMeta.textContent = `${total} lượt bình chọn${selected ? ' · Bạn đã bình chọn' : ' · Chọn một phương án'}`;
     }
 
     function updatePostCard(card, post, number) {
+      const r = card._refs;
+      if (!r) return;
+
       const author = getPostAuthor(post);
-      const avatar = $('.post-avatar', card);
-      avatar.textContent = avatarLetters(author);
-      avatar.style.background = avatarGradient(post.authorId || post.id);
-      $('.post-author', card).textContent = author;
-      $('.post-number', card).textContent = `#${number}`;
-      $('.post-time', card).textContent = formatRelativeTime(post.timestamp);
-      const today = $('.today-badge', card);
-      today.hidden = !isToday(post.timestamp);
-      $('.post-content', card).textContent = String(post.content || '');
-      const category = $('.post-category', card);
-      category.hidden = !categories[post.category];
-      category.textContent = categories[post.category] || '';
-      $('[data-like-count]', card).textContent = String(totalEngagement(post));
-      $('[data-comment-count]', card).textContent = String(countComments(post.comments));
+      if (r.author.textContent !== author) {
+        r.author.textContent = author;
+        r.avatar.textContent = avatarLetters(author);
+        r.avatar.style.background = avatarGradient(post.authorId || post.id);
+      }
+      const numStr = `#${number}`;
+      if (r.number.textContent !== numStr) r.number.textContent = numStr;
+
+      const timeStr = formatRelativeTime(post.timestamp);
+      if (r.time.textContent !== timeStr) r.time.textContent = timeStr;
+
+      const postIsToday = isToday(post.timestamp);
+      if (r.today.hidden !== !postIsToday) r.today.hidden = !postIsToday;
+
+      const contentStr = String(post.content || '');
+      if (r.content.textContent !== contentStr) r.content.textContent = contentStr;
+
+      const catStr = categories[post.category] || '';
+      if (r.category.hidden !== !catStr) r.category.hidden = !catStr;
+      if (catStr && r.category.textContent !== catStr) r.category.textContent = catStr;
+
+      const likeStr = String(totalEngagement(post));
+      if (r.likeCount.textContent !== likeStr) r.likeCount.textContent = likeStr;
+
+      const commentStr = String(countComments(post.comments));
+      if (r.commentCount.textContent !== commentStr) r.commentCount.textContent = commentStr;
 
       renderPoll(card, post);
 
-      const likeButton = $('[data-action="like"]', card);
-      likeButton.classList.toggle('liked', Boolean(post.likedBy && post.likedBy[identity.id]));
-      likeButton.disabled = state.likePending.has(post.id);
+      const isLiked = Boolean(post.likedBy && post.likedBy[identity.id]);
+      r.likeBtn.classList.toggle('liked', isLiked);
+      r.likeBtn.disabled = state.likePending.has(post.id);
 
-      const section = $('.comments', card);
-      const commentsButton = $('[data-action="comments"]', card);
       const open = state.openComments.has(post.id);
-      section.classList.toggle('open', open);
-      commentsButton.setAttribute('aria-expanded', String(open));
+      r.commentsSec.classList.toggle('open', open);
+      r.commentsBtn.setAttribute('aria-expanded', String(open));
       if (open) {
         const fingerprint = commentsFingerprint(post.comments);
-        if (section.dataset.commentsFingerprint !== fingerprint) {
-          renderComments(post.id, post.comments, section);
-          section.dataset.commentsFingerprint = fingerprint;
+        if (r.commentsSec.dataset.commentsFingerprint !== fingerprint) {
+          renderComments(post.id, post.comments, r.commentsSec);
+          r.commentsSec.dataset.commentsFingerprint = fingerprint;
         }
       }
     }
@@ -2747,18 +2943,27 @@
       };
     }
 
+    function scheduleStudyChatRender() {
+      if (state.studyChatRenderQueued) return;
+      state.studyChatRenderQueued = true;
+      window.requestAnimationFrame(() => {
+        state.studyChatRenderQueued = false;
+        renderStudyChat();
+      });
+    }
+
     function upsertStudyChatRecord(id, value, source = 'current') {
       const parsed = parseStudyChatRecord(id, value, source);
       if (!parsed) return false;
       state.studyChatMessages.set(parsed.id, parsed);
-      renderStudyChat();
+      scheduleStudyChatRender();
       return true;
     }
 
     function removeStudyChatRecord(id, source = 'current') {
       const key = source === 'legacy' ? `legacy:${id}` : id;
       const removed = state.studyChatMessages.delete(key);
-      if (removed) renderStudyChat();
+      if (removed) scheduleStudyChatRender();
       return removed;
     }
 
@@ -3304,21 +3509,23 @@
 
       targets.forEach(target => {
         if (!target.avatars || !target.names) return;
-        target.avatars.innerHTML = '';
 
         if (!members.length) {
+          target.avatars.replaceChildren();
           target.names.textContent = 'Chưa có ai trong phòng';
           return;
         }
 
+        const fragment = document.createDocumentFragment();
         members.slice(0, 4).forEach(member => {
           const avatar = document.createElement('span');
           avatar.className = 'study-preview-avatar';
           avatar.textContent = avatarLetters(member.name || 'Ẩn danh');
           avatar.style.background = avatarGradient(member.userId || member.id);
           avatar.title = `${member.name || 'Thành viên ẩn danh'} · ${member.grade || 'Chưa chọn lớp'} · ${member.subject || 'Đang học'}`;
-          target.avatars.appendChild(avatar);
+          fragment.appendChild(avatar);
         });
+        target.avatars.replaceChildren(fragment);
 
         const visibleNames = members.slice(0, 2).map(member => shortName(member.name));
         const remaining = members.length - visibleNames.length;
@@ -3344,15 +3551,15 @@
       if (el.studyCompletedCount) el.studyCompletedCount.textContent = String(members.filter(member => member.completed).length);
       if (el.studySubjectCount) el.studySubjectCount.textContent = String(new Set(members.map(member => member.subject).filter(Boolean)).size);
 
-      el.studyMembers.innerHTML = '';
       if (!members.length) {
         const empty = document.createElement('div');
         empty.className = 'study-empty';
         empty.textContent = 'Chưa có ai trong phòng. Hãy là người bắt đầu phiên học đầu tiên.';
-        el.studyMembers.appendChild(empty);
+        el.studyMembers.replaceChildren(empty);
         return;
       }
 
+      const fragment = document.createDocumentFragment();
       members.forEach(member => {
         const own = member.id === presenceSessionId;
         const joinedMinutes = Math.max(0, Math.floor((studyNow() - numberTimestamp(member.joinedAt)) / 60000));
@@ -3396,8 +3603,9 @@
         meta.append(dot, status);
         main.append(name, tags, goal, meta);
         card.append(avatar, main);
-        el.studyMembers.appendChild(card);
+        fragment.appendChild(card);
       });
+      el.studyMembers.replaceChildren(fragment);
     }
 
     function updatePageScrollLock() {
@@ -3484,15 +3692,12 @@
       const messages = Array.from(state.studyChatMessages.values())
         .sort((a, b) => numberTimestamp(a.timestamp) - numberTimestamp(b.timestamp));
 
-      el.studyChatMessages.innerHTML = '';
       if (!messages.length) {
-        const empty = document.createElement('div');
-        empty.className = 'study-chat-empty';
-        empty.textContent = 'Chưa có tin nhắn. Hãy tham gia phòng và gửi lời chào đầu tiên.';
-        el.studyChatMessages.appendChild(empty);
+        el.studyChatMessages.innerHTML = '<div class="study-chat-empty">Chưa có tin nhắn. Hãy tham gia phòng và gửi lời chào đầu tiên.</div>';
         return;
       }
 
+      const fragment = document.createDocumentFragment();
       let lastDay = null;
       const todayStart = chatDayStart(Date.now());
 
@@ -3506,7 +3711,7 @@
           const label = document.createElement('span');
           label.textContent = formatChatDayLabel(message.timestamp);
           divider.appendChild(label);
-          el.studyChatMessages.appendChild(divider);
+          fragment.appendChild(divider);
           lastDay = messageDay;
         }
 
@@ -3555,9 +3760,10 @@
 
         main.append(author, goal, bubble, time);
         row.append(avatar, main);
-        el.studyChatMessages.appendChild(row);
+        fragment.appendChild(row);
       });
 
+      el.studyChatMessages.replaceChildren(fragment);
       el.studyChatMessages.scrollTop = el.studyChatMessages.scrollHeight;
     }
 
@@ -3689,8 +3895,11 @@
         Array.from(state.studyChatMessages.keys()).forEach(key => {
           if (String(key).startsWith('legacy:')) state.studyChatMessages.delete(key);
         });
-        snapshot.forEach(child => upsertStudyChatRecord(child.key, child.val() || {}, 'legacy'));
-        renderStudyChat();
+        snapshot.forEach(child => {
+          const parsed = parseStudyChatRecord(child.key, child.val() || {}, 'legacy');
+          if (parsed) state.studyChatMessages.set(parsed.id, parsed);
+        });
+        scheduleStudyChatRender();
       }, error => {
         // Chat mới vẫn hoạt động kể cả khi nhánh lịch sử cũ không đọc được.
         console.warn('Không thể tải lịch sử chat cũ:', error);
@@ -3778,9 +3987,14 @@
         el.postCharCount.textContent = String(el.postContent.value.length);
         el.postContent.focus();
       });
+      let searchTimer = null;
       el.searchInput.addEventListener('input', () => {
-        state.search = el.searchInput.value;
-        scheduleFeedRender();
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(() => {
+          state.search = el.searchInput.value;
+          state.displayLimit = 25;
+          scheduleFeedRender();
+        }, 120);
       });
       el.sortTabs.forEach(tab => tab.addEventListener('click', () => {
         state.sort = tab.dataset.sort === 'popular' ? 'popular' : 'latest';
@@ -3789,11 +4003,13 @@
           item.classList.toggle('active', active);
           item.setAttribute('aria-selected', String(active));
         });
+        state.displayLimit = 25;
         scheduleFeedRender();
       }));
       el.categoryFilters.forEach(button => button.addEventListener('click', () => {
         state.category = button.dataset.category || 'all';
         el.categoryFilters.forEach(item => item.classList.toggle('active', item === button));
+        state.displayLimit = 25;
         scheduleFeedRender();
       }));
       el.announcementClose.addEventListener('click', () => {
