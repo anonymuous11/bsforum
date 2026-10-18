@@ -3241,6 +3241,14 @@
 
       const commentsRef = refs.posts.child(postId).child('comments');
       const target = parentPath ? commentsRef.child(parentPath).child('replies') : commentsRef;
+
+      // Clear input & close form BEFORE push so that a re-render triggered
+      // by the realtime listener during the await won't capture stale draft text.
+      const savedValue = input.value;
+      input.value = '';
+      const replyForm = input.closest('.reply-form');
+      if (replyForm) replyForm.classList.remove('open');
+
       try {
         await target.push({
           name: identity.name,
@@ -3249,11 +3257,11 @@
           timestamp: serverTimestamp
         });
         cooldown.commit();
-        input.value = '';
-        const replyForm = input.closest('.reply-form');
-        if (replyForm) replyForm.classList.remove('open');
         return true;
       } catch (error) {
+        // Restore input on failure so the user doesn't lose their text
+        input.value = savedValue;
+        if (replyForm) replyForm.classList.add('open');
         console.error(error);
         toast(describeFirebaseError(error, 'Không thể gửi bình luận.'), 'error');
         return false;
