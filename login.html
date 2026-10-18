@@ -186,6 +186,10 @@ button, input, textarea, select { touch-action: manipulation; }
                 <h3>⏳ Bài viết chờ duyệt</h3>
                 <div class="number" id="pendingCount">0</div>
             </div>
+            <div class="stat-card">
+                <h3>👁 Tổng lượt xem</h3>
+                <div class="number" id="totalViews">0</div>
+            </div>
         </div>
     </div>
 </div>
@@ -334,6 +338,7 @@ function approvePost(pendingId, content, timestamp, authorName) {
         content: content,
         timestamp: timestamp,
         likes: 0,
+        views: 0,
         likedBy: {},
         approvedBy: "Admin",
         approvedAt: Date.now()
@@ -392,6 +397,7 @@ function renderPosts(posts) {
             <div class="post-stats">
                 <span>👍 ${post.likes || 0} lượt thích</span>
                 <span>💬 ${commentCount} bình luận</span>
+                <span>👁 ${post.views || 0} lượt xem</span>
             </div>
             <div class="post-actions">
                 <button class="btn btn-danger" onclick="deletePost('${post.id}')">🗑 Xóa bài viết</button>
@@ -574,6 +580,7 @@ async function loadStats() {
     let totalPosts = 0;
     let totalComments = 0;
     let totalLikes = 0;
+    let totalViews = 0;
     let todayPosts = 0;
     const users = new Set();
     const today = new Date().toDateString();
@@ -582,6 +589,7 @@ async function loadStats() {
         const post = posts[postId];
         totalPosts++;
         totalLikes += post.likes || 0;
+        totalViews += post.views || 0;
         
         if (post.timestamp && new Date(post.timestamp).toDateString() === today) {
             todayPosts++;
@@ -605,6 +613,8 @@ async function loadStats() {
     document.getElementById("totalPosts").innerText = totalPosts;
     document.getElementById("totalComments").innerText = totalComments;
     document.getElementById("totalLikes").innerText = totalLikes;
+    const elViews = document.getElementById("totalViews");
+    if (elViews) elViews.innerText = totalViews;
     document.getElementById("pendingReports").innerText = pendingReports;
     document.getElementById("totalUsers").innerText = users.size || 0;
     document.getElementById("todayPosts").innerText = todayPosts;

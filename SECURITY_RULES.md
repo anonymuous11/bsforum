@@ -36,6 +36,10 @@ Google thiết kế nó để dùng trong client-side code.
         "comments": {
           // Cho phép thêm bình luận
           ".write": true
+        },
+        "views": {
+          // Cho phép cập nhật lượt xem
+          ".write": true
         }
       }
     },
@@ -105,7 +109,8 @@ cũng bị chặn đọc/ghi `pending_posts`, `reports`, và ghi `confessions`.
         ".write": "(auth != null && auth.uid === 'YOUR_ADMIN_UID') || (!data.exists() && newData.exists())",
         "likes": { ".write": true },
         "likedBy": { ".write": true },
-        "comments": { ".write": true }
+        "comments": { ".write": true },
+        "views": { ".write": true }
       }
     },
     "announcements": {
