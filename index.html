@@ -3175,7 +3175,9 @@
       const fragment = document.createDocumentFragment();
       const entries = Object.entries(comments)
         .filter(([, comment]) => comment && typeof comment === 'object')
-        .sort(([, a], [, b]) => numberTimestamp(a.timestamp) - numberTimestamp(b.timestamp));
+        .sort(([, a], [, b]) => parentPath
+          ? numberTimestamp(a.timestamp) - numberTimestamp(b.timestamp)
+          : numberTimestamp(b.timestamp) - numberTimestamp(a.timestamp));
 
       entries.forEach(([commentId, comment]) => {
         const path = parentPath ? `${parentPath}/replies/${commentId}` : commentId;
