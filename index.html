@@ -2617,6 +2617,27 @@
       return Number(post.likes) || 0;
     }
 
+    function estimateInitialViews(post) {
+      if (!post) return 0;
+      const likes = Math.max(0, Number(post.likes) || 0);
+      const comments = countComments(post.comments);
+      let seed = 0;
+      const str = String(post.id || post.timestamp || 'binhson');
+      for (let i = 0; i < str.length; i++) {
+        seed = (seed * 31 + str.charCodeAt(i)) >>> 0;
+      }
+      const base = 18 + (seed % 27);
+      return base + (likes * 7) + (comments * 4);
+    }
+
+    function getPostViews(post) {
+      if (!post) return 0;
+      if (post.views !== undefined && post.views !== null) {
+        return Math.max(0, Number(post.views) || 0);
+      }
+      return estimateInitialViews(post);
+    }
+
     function scheduleFeedRender() {
       if (state.feedRenderQueued) return;
       state.feedRenderQueued = true;
@@ -2880,7 +2901,7 @@
       const commentStr = String(countComments(post.comments));
       if (r.commentCount.textContent !== commentStr) r.commentCount.textContent = commentStr;
 
-      const viewStr = String(Number(post.views) || 0);
+      const viewStr = String(getPostViews(post));
       if (r.viewCount.textContent !== viewStr) r.viewCount.textContent = viewStr;
 
       renderPoll(card, post);
@@ -3178,8 +3199,9 @@
       } catch (_) {}
 
       const localPost = state.posts.get(postId);
+      const postViews = localPost ? getPostViews(localPost) : 0;
       if (localPost) {
-        localPost.views = (Number(localPost.views) || 0) + 1;
+        localPost.views = postViews + 1;
         const card = state.cards.get(postId);
         if (card && card._refs && card._refs.viewCount) {
           card._refs.viewCount.textContent = String(localPost.views);
@@ -3188,6 +3210,9 @@
 
       try {
         await refs.posts.child(postId).child('views').transaction(current => {
+          if (current === null || current === undefined) {
+            return postViews + 1;
+          }
           return (Number(current) || 0) + 1;
         });
       } catch (error) {

@@ -255,6 +255,27 @@ function countTopLevelComments(commentsObj) {
     return count;
 }
 
+function estimateInitialViews(post) {
+    if (!post) return 0;
+    const likes = Math.max(0, Number(post.likes) || 0);
+    const comments = countTopLevelComments(post.comments);
+    let seed = 0;
+    const str = String(post.id || post.timestamp || 'binhson');
+    for (let i = 0; i < str.length; i++) {
+        seed = (seed * 31 + str.charCodeAt(i)) >>> 0;
+    }
+    const base = 18 + (seed % 27);
+    return base + (likes * 7) + (comments * 4);
+}
+
+function getPostViews(post) {
+    if (!post) return 0;
+    if (post.views !== undefined && post.views !== null) {
+        return Math.max(0, Number(post.views) || 0);
+    }
+    return estimateInitialViews(post);
+}
+
 // ========== CHUYỂN TAB ==========
 function switchTab(tab) {
     document.querySelectorAll('.section').forEach(section => {
@@ -397,7 +418,7 @@ function renderPosts(posts) {
             <div class="post-stats">
                 <span>👍 ${post.likes || 0} lượt thích</span>
                 <span>💬 ${commentCount} bình luận</span>
-                <span>👁 ${post.views || 0} lượt xem</span>
+                <span>👁 ${getPostViews(post)} lượt xem</span>
             </div>
             <div class="post-actions">
                 <button class="btn btn-danger" onclick="deletePost('${post.id}')">🗑 Xóa bài viết</button>
@@ -589,7 +610,7 @@ async function loadStats() {
         const post = posts[postId];
         totalPosts++;
         totalLikes += post.likes || 0;
-        totalViews += post.views || 0;
+        totalViews += getPostViews({ id: postId, ...post });
         
         if (post.timestamp && new Date(post.timestamp).toDateString() === today) {
             todayPosts++;
