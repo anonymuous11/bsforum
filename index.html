@@ -539,15 +539,23 @@
     .comment-node { min-width: 0; }
     .comment-row { display: flex; align-items: flex-start; gap: 9px; }
     .comment-avatar { width: 30px; height: 30px; border-radius: 10px; display: grid; place-items: center; color: white; font-size: 9px; font-weight: 850; flex: 0 0 auto; }
+    .comment-reply-node .comment-avatar { width: 26px; height: 26px; border-radius: 9px; font-size: 8px; }
     .comment-main { min-width: 0; flex: 1; }
     .comment-bubble { display: inline-block; max-width: 100%; padding: 9px 11px; border: 1px solid var(--line); border-radius: 5px 14px 14px 14px; background: var(--surface-solid); }
     .comment-name { color: var(--text); font-size: 10px; font-weight: 850; }
     .comment-text { margin-top: 2px; color: var(--text); font-size: 12px; line-height: 1.5; white-space: pre-wrap; overflow-wrap: anywhere; }
+    .comment-reply-target { font-weight: 800; color: var(--text); margin-right: 5px; display: inline; }
     .comment-meta { margin-top: 4px; display: flex; align-items: center; gap: 10px; color: var(--subtle); font-size: 9px; }
     .reply-link { border: 0; padding: 0; color: var(--primary); background: transparent; font-weight: 800; cursor: pointer; }
-    .reply-form { display: none; margin: 7px 0 0 39px; gap: 7px; }
+    .reply-form { display: none; margin: 8px 0 0 39px; flex-direction: column; gap: 6px; }
     .reply-form.open { display: flex; }
+    .reply-input-row { display: flex; align-items: center; gap: 7px; width: 100%; }
+    .reply-target-bar { display: flex; align-items: center; justify-content: space-between; padding: 4px 10px; border-radius: 9px; background: color-mix(in srgb, var(--primary) 12%, transparent); font-size: 11px; color: var(--muted); }
+    .reply-target-name { color: var(--text); font-weight: 750; }
+    .reply-cancel-btn { border: 0; background: transparent; color: var(--subtle); font-size: 12px; padding: 0 4px; cursor: pointer; line-height: 1; }
+    .reply-cancel-btn:hover { color: var(--text); }
     .reply-children { margin: 10px 0 0 38px; padding-left: 11px; border-left: 1px solid var(--line); display: grid; gap: 11px; }
+    .reply-children:empty { display: none; margin: 0; padding: 0; border: 0; }
     .empty-comments { padding: 8px 0 2px; text-align: center; color: var(--subtle); font-size: 11px; }
 
     .empty-state, .loading-state { padding: 36px 20px; text-align: center; }
@@ -2584,7 +2592,7 @@
         Object.keys(object).sort().forEach(key => {
           const comment = object[key];
           if (!comment || typeof comment !== 'object') return;
-          parts.push(key, String(comment.timestamp || ''), String(comment.text || ''), String(comment.name || comment.authorName || ''));
+          parts.push(key, String(comment.timestamp || ''), String(comment.text || ''), String(comment.name || comment.authorName || ''), String(comment.replyTo || ''));
           if (comment.replies && typeof comment.replies === 'object') walk(comment.replies);
         });
       };
@@ -3247,14 +3255,91 @@
       }
     }
 
+    function escapeHtmlAttr(str) {
+      return String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    }
+
+    function flattenReplies(repliesObj, fallbackParentName, rootCommentId, currentPath = '') {
+      if (!repliesObj || typeof repliesObj !== 'object') return [];
+      const list = [];
+
+      Object.entries(repliesObj).forEach(([id, item]) => {
+        if (!item || typeof item !== 'object') return;
+
+        if (isLegacyGhostComment(item)) {
+          const ghostPath = currentPath ? `${currentPath}/replies/${id}` : `${rootCommentId}/replies/${id}`;
+          list.push(...flattenReplies(item.replies, fallbackParentName, rootCommentId, ghostPath));
+          return;
+        }
+
+        const itemPath = currentPath ? `${currentPath}/replies/${id}` : `${rootCommentId}/replies/${id}`;
+        const authorName = item.name || item.authorName || 'Thành viên ẩn danh';
+        const replyTo = item.replyTo || fallbackParentName || '';
+
+        list.push({
+          id,
+          path: itemPath,
+          authorId: item.authorId || itemPath,
+          authorName,
+          replyTo,
+          text: String(item.text || ''),
+          timestamp: numberTimestamp(item.timestamp)
+        });
+
+        if (item.replies && typeof item.replies === 'object') {
+          list.push(...flattenReplies(item.replies, authorName, rootCommentId, itemPath));
+        }
+      });
+
+      return list;
+    }
+
+    function setCommentContent(container, text, replyTo) {
+      container.textContent = '';
+      const safeText = String(text || '');
+      if (!replyTo) {
+        container.textContent = safeText;
+        return;
+      }
+
+      const cleanReplyTo = String(replyTo).trim();
+      const startsWithAt = safeText.startsWith('@' + cleanReplyTo);
+      const startsWithExact = safeText.startsWith(cleanReplyTo);
+
+      let remainingText = safeText;
+      if (startsWithAt) {
+        remainingText = safeText.slice(cleanReplyTo.length + 1).replace(/^[\s,;:]+/, ' ');
+      } else if (startsWithExact) {
+        remainingText = safeText.slice(cleanReplyTo.length).replace(/^[\s,;:]+/, ' ');
+      } else {
+        remainingText = ' ' + safeText;
+      }
+
+      const strong = document.createElement('strong');
+      strong.className = 'comment-reply-target';
+      strong.textContent = cleanReplyTo;
+      container.appendChild(strong);
+      container.appendChild(document.createTextNode(remainingText));
+    }
+
     function captureReplyDrafts(list) {
       const drafts = new Map();
-      $$('.comment-node', list).forEach(node => {
-        const form = $('[data-reply-form]', node);
-        const input = form && $('input', form);
-        if (!node.dataset.commentPath || !form || !input) return;
+      $$('[data-reply-form]', list).forEach(form => {
+        const input = $('input', form);
+        const rootId = form.dataset.rootId || form.closest('.comment-node')?.dataset.commentId;
+        if (!rootId || !input) return;
         if (form.classList.contains('open') || input.value) {
-          drafts.set(node.dataset.commentPath, { open: form.classList.contains('open'), value: input.value });
+          drafts.set(rootId, {
+            open: form.classList.contains('open'),
+            value: input.value,
+            replyTo: form.dataset.replyTo || '',
+            replyToDisplay: $('.reply-target-name', form)?.textContent || form.dataset.replyTo || ''
+          });
         }
       });
       return drafts;
@@ -3269,69 +3354,125 @@
         list.innerHTML = '<div class="empty-comments">Chưa có bình luận. Hãy là người đầu tiên.</div>';
         return;
       }
-      list.appendChild(buildCommentTree(postId, comments, '', drafts));
+      list.appendChild(buildCommentTree(postId, comments, drafts));
     }
 
-    function buildCommentTree(postId, comments, parentPath, drafts) {
+    function buildCommentTree(postId, comments, drafts) {
       const fragment = document.createDocumentFragment();
       const entries = Object.entries(comments)
         .filter(([, comment]) => comment && typeof comment === 'object')
-        .sort(([, a], [, b]) => parentPath
-          ? numberTimestamp(a.timestamp) - numberTimestamp(b.timestamp)
-          : numberTimestamp(b.timestamp) - numberTimestamp(a.timestamp));
+        .sort(([, a], [, b]) => numberTimestamp(b.timestamp) - numberTimestamp(a.timestamp));
 
       entries.forEach(([commentId, comment]) => {
-        const path = parentPath ? `${parentPath}/replies/${commentId}` : commentId;
-
         // Dữ liệu cũ có thể chứa một nút giả chỉ có "replies" do đường dẫn trả lời bị ghi sai.
-        // Bỏ qua nút giả nhưng giữ nguyên đường dẫn thật để các câu trả lời tiếp theo vẫn ghi đúng chỗ.
         if (isLegacyGhostComment(comment)) {
-          fragment.appendChild(buildCommentTree(postId, comment.replies, path, drafts));
+          if (comment.replies && typeof comment.replies === 'object') {
+            fragment.appendChild(buildCommentTree(postId, comment.replies, drafts));
+          }
           return;
         }
 
+        const name = comment.name || comment.authorName || 'Thành viên ẩn danh';
         const node = document.createElement('div');
-        node.className = 'comment-node';
-        node.dataset.commentPath = path;
+        node.className = 'comment-node root-comment-node';
+        node.dataset.commentId = commentId;
+        node.dataset.commentPath = commentId;
         node.innerHTML = `
           <div class="comment-row">
             <div class="comment-avatar"></div>
             <div class="comment-main">
-              <div class="comment-bubble"><div class="comment-name"></div><div class="comment-text"></div></div>
-              <div class="comment-meta"><span></span><button class="reply-link" type="button" data-action="reply">Trả lời</button></div>
+              <div class="comment-bubble">
+                <div class="comment-name"></div>
+                <div class="comment-text"></div>
+              </div>
+              <div class="comment-meta">
+                <span></span>
+                <button class="reply-link" type="button" data-action="reply" data-reply-to="${escapeHtmlAttr(name)}" data-root-id="${commentId}">Trả lời</button>
+              </div>
             </div>
           </div>
-          <form class="reply-form" data-reply-form>
-            <input type="text" maxlength="500" placeholder="Viết câu trả lời…" autocomplete="off">
-            <button class="send-mini" type="submit" aria-label="Gửi trả lời">${iconUse('i-send')}</button>
-          </form>
-          <div class="reply-children"></div>`;
+          <div class="reply-children"></div>
+          <form class="reply-form" data-reply-form data-root-id="${commentId}">
+            <div class="reply-target-bar" data-reply-target-bar style="display: none;">
+              <span class="reply-target-text">Đang trả lời <strong class="reply-target-name"></strong></span>
+              <button class="reply-cancel-btn" type="button" data-action="cancel-reply" aria-label="Hủy">✕</button>
+            </div>
+            <div class="reply-input-row">
+              <input type="text" maxlength="500" placeholder="Viết câu trả lời…" autocomplete="off">
+              <button class="send-mini" type="submit" aria-label="Gửi trả lời">${iconUse('i-send')}</button>
+            </div>
+          </form>`;
 
-        const name = comment.name || comment.authorName || 'Thành viên ẩn danh';
         const avatar = $('.comment-avatar', node);
         avatar.textContent = avatarLetters(name);
-        avatar.style.background = avatarGradient(comment.authorId || path);
+        avatar.style.background = avatarGradient(comment.authorId || commentId);
         $('.comment-name', node).textContent = name;
-        $('.comment-text', node).textContent = String(comment.text || '');
+        setCommentContent($('.comment-text', node), comment.text, comment.replyTo);
         $('.comment-meta span', node).textContent = formatRelativeTime(comment.timestamp);
 
-        const draft = drafts.get(path);
-        if (draft) {
-          const form = $('[data-reply-form]', node);
-          const input = $('input', form);
-          input.value = draft.value;
-          form.classList.toggle('open', draft.open || Boolean(draft.value));
+        // Render tất cả các reply (phẳng hoá thành 1 cấp duy nhất - Facebook Style)
+        const repliesContainer = $('.reply-children', node);
+        if (comment.replies && typeof comment.replies === 'object') {
+          const flatReplies = flattenReplies(comment.replies, name, commentId);
+          flatReplies.sort((a, b) => a.timestamp - b.timestamp);
+
+          flatReplies.forEach(reply => {
+            const replyNode = document.createElement('div');
+            replyNode.className = 'comment-node comment-reply-node';
+            replyNode.dataset.commentPath = reply.path;
+            replyNode.dataset.replyAuthor = reply.authorName;
+            replyNode.innerHTML = `
+              <div class="comment-row">
+                <div class="comment-avatar"></div>
+                <div class="comment-main">
+                  <div class="comment-bubble">
+                    <div class="comment-name"></div>
+                    <div class="comment-text"></div>
+                  </div>
+                  <div class="comment-meta">
+                    <span></span>
+                    <button class="reply-link" type="button" data-action="reply" data-reply-to="${escapeHtmlAttr(reply.authorName)}" data-root-id="${commentId}">Trả lời</button>
+                  </div>
+                </div>
+              </div>`;
+
+            const repAvatar = $('.comment-avatar', replyNode);
+            repAvatar.textContent = avatarLetters(reply.authorName);
+            repAvatar.style.background = avatarGradient(reply.authorId || reply.path);
+            $('.comment-name', replyNode).textContent = reply.authorName;
+            setCommentContent($('.comment-text', replyNode), reply.text, reply.replyTo);
+            $('.comment-meta span', replyNode).textContent = formatRelativeTime(reply.timestamp);
+
+            repliesContainer.appendChild(replyNode);
+          });
         }
 
-        if (comment.replies && typeof comment.replies === 'object') {
-          $('.reply-children', node).appendChild(buildCommentTree(postId, comment.replies, path, drafts));
+        // Khôi phục bản nháp đang gõ nếu có realtime re-render
+        const draft = drafts.get(commentId);
+        if (draft) {
+          const form = $('[data-reply-form]', node);
+          const input = form && $('input', form);
+          if (input) {
+            input.value = draft.value || '';
+            if (draft.replyTo) {
+              form.dataset.replyTo = draft.replyTo;
+              const bar = $('[data-reply-target-bar]', form);
+              const nameEl = $('.reply-target-name', form);
+              if (nameEl) nameEl.textContent = draft.replyToDisplay || draft.replyTo;
+              if (bar) bar.style.display = 'flex';
+              input.placeholder = `Trả lời ${draft.replyTo}…`;
+            }
+            form.classList.toggle('open', draft.open || Boolean(draft.value));
+          }
         }
+
         fragment.appendChild(node);
       });
+
       return fragment;
     }
 
-    async function submitComment(postId, input, parentPath = '') {
+    async function submitComment(postId, input, parentCommentId = '', replyTo = '') {
       const text = normalizeText(input.value, limits.comment.max);
       if (!text) return false;
       const cooldown = cooldownReady('comment', limits.comment.cooldown);
@@ -3341,28 +3482,45 @@
       }
 
       const commentsRef = refs.posts.child(postId).child('comments');
-      const target = parentPath ? commentsRef.child(parentPath).child('replies') : commentsRef;
+      const target = parentCommentId ? commentsRef.child(parentCommentId).child('replies') : commentsRef;
 
       // Clear input & close form BEFORE push so that a re-render triggered
       // by the realtime listener during the await won't capture stale draft text.
       const savedValue = input.value;
       input.value = '';
       const replyForm = input.closest('.reply-form');
-      if (replyForm) replyForm.classList.remove('open');
+      if (replyForm) {
+        replyForm.classList.remove('open');
+        replyForm.dataset.replyTo = '';
+        const targetBar = $('[data-reply-target-bar]', replyForm);
+        if (targetBar) targetBar.style.display = 'none';
+      }
 
       try {
-        await target.push({
+        const payload = {
           name: identity.name,
           authorId: identity.id,
           text,
           timestamp: serverTimestamp
-        });
+        };
+        if (parentCommentId && replyTo) {
+          payload.replyTo = replyTo;
+        }
+
+        await target.push(payload);
         cooldown.commit();
         return true;
       } catch (error) {
         // Restore input on failure so the user doesn't lose their text
         input.value = savedValue;
-        if (replyForm) replyForm.classList.add('open');
+        if (replyForm) {
+          replyForm.classList.add('open');
+          if (replyTo) {
+            replyForm.dataset.replyTo = replyTo;
+            const targetBar = $('[data-reply-target-bar]', replyForm);
+            if (targetBar) targetBar.style.display = 'flex';
+          }
+        }
         console.error(error);
         toast(describeFirebaseError(error, 'Không thể gửi bình luận.'), 'error');
         return false;
@@ -4034,13 +4192,46 @@
       else if (action === 'comments') toggleComments(postId, card);
       else if (action === 'report') openReport(postId);
       else if (action === 'reply') {
-        const node = actionButton.closest('.comment-node');
-        const form = node && $('[data-reply-form]', node);
-        if (!form) return;
-        form.classList.toggle('open');
-        if (form.classList.contains('open')) {
+        const rootNode = actionButton.closest('.comment-node[data-comment-id]');
+        const targetForm = rootNode && $('[data-reply-form]', rootNode);
+        if (!targetForm) return;
+
+        const targetAuthor = actionButton.dataset.replyTo || $('.comment-name', actionButton.closest('.comment-node'))?.textContent || '';
+        const targetBar = $('[data-reply-target-bar]', targetForm);
+        const targetNameEl = $('.reply-target-name', targetForm);
+        const input = $('input', targetForm);
+
+        // Nếu bấm lại vào chính người đó khi form đang mở và chưa nhập gì -> đóng form
+        if (targetForm.classList.contains('open') && targetForm.dataset.replyTo === targetAuthor && input && !input.value.trim()) {
+          targetForm.classList.remove('open');
+          targetForm.dataset.replyTo = '';
+          if (targetBar) targetBar.style.display = 'none';
+          return;
+        }
+
+        targetForm.classList.add('open');
+        targetForm.dataset.replyTo = targetAuthor;
+        if (targetBar && targetNameEl && targetAuthor) {
+          targetNameEl.textContent = targetAuthor;
+          targetBar.style.display = 'flex';
+        }
+        if (input) {
+          input.placeholder = targetAuthor ? `Trả lời ${targetAuthor}…` : 'Viết câu trả lời…';
+          targetForm.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          input.focus();
+        }
+      } else if (action === 'cancel-reply') {
+        const form = actionButton.closest('[data-reply-form]');
+        if (form) {
+          form.classList.remove('open');
+          form.dataset.replyTo = '';
+          const targetBar = $('[data-reply-target-bar]', form);
+          if (targetBar) targetBar.style.display = 'none';
           const input = $('input', form);
-          if (input) input.focus();
+          if (input) {
+            input.value = '';
+            input.placeholder = 'Viết câu trả lời…';
+          }
         }
       }
     }
@@ -4055,11 +4246,19 @@
       const input = $('input', event.target);
       const button = $('button[type="submit"]', event.target);
       if (!postId || !input || !button || button.disabled) return;
-      const node = replyForm && replyForm.closest('.comment-node');
-      const parentPath = node ? node.dataset.commentPath || '' : '';
-      button.disabled = true;
-      await submitComment(postId, input, parentPath);
-      button.disabled = false;
+
+      if (commentForm) {
+        button.disabled = true;
+        await submitComment(postId, input, '', '');
+        button.disabled = false;
+      } else if (replyForm) {
+        const rootNode = replyForm.closest('.comment-node[data-comment-id]');
+        const rootCommentId = replyForm.dataset.rootId || (rootNode ? rootNode.dataset.commentId : '');
+        const replyTo = replyForm.dataset.replyTo || '';
+        button.disabled = true;
+        await submitComment(postId, input, rootCommentId, replyTo);
+        button.disabled = false;
+      }
     }
 
     function initDailyPrompt() {
